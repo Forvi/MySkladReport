@@ -41,10 +41,6 @@ public class RetailStore {
 
     @Override
     public String toString() {
-        return "Revenue{" +
-                "itemID=" + itemID +
-                ", name='" + name + '\'' +
-                ", revenue=" + revenue +
-                '}';
+        return this.name;
     }
 }

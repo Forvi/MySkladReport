@@ -7,8 +7,9 @@ module org.example.myskladreport {
     requires java.net.http;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
+    requires javafx.graphics;
     
 
-    opens org.example.myskladreport to javafx.fxml;
+    opens org.example.myskladreport.controllers to javafx.fxml;
     exports org.example.myskladreport;
 }
