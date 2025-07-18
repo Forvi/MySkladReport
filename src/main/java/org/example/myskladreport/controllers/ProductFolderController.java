@@ -7,8 +7,7 @@ import java.util.ResourceBundle;
 
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.PopOver;
-import org.example.myskladreport.HelloApplication;
-import org.example.myskladreport.models.RetailStore;
+import org.example.myskladreport.models.ProductFolder;
 import org.example.myskladreport.utils.SkladRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,24 +16,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
-public class RetailStoreController implements Initializable {
+public class ProductFolderController implements Initializable {
 
     @FXML
     private TextField listSearch;
 
     @FXML
-    private CheckListView<RetailStore> checkListView;
+    private CheckListView<ProductFolder> checkListView;
 
     @FXML
     private Button nextButton;
@@ -45,11 +40,11 @@ public class RetailStoreController implements Initializable {
     @FXML
     private Button selectButton;
 
-    private final String URL = "https://api.moysklad.ru/api/remap/1.2/report/profit/bysaleschannel";
+    private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder/";
 
-    ObservableList<RetailStore> masterData;
+    ObservableList<ProductFolder> masterData;
 
-    private FilteredList<RetailStore> filteredData;
+    private FilteredList<ProductFolder> filteredData;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -60,7 +55,7 @@ public class RetailStoreController implements Initializable {
     }
 
     private void loadData() {
-        String token = "token";
+        String token = "4a097c0a92d9988ade36bd5cf47ee9c5722a8230";
         SkladRequest skladRequest = new SkladRequest(token);
         
         try {
@@ -70,11 +65,11 @@ public class RetailStoreController implements Initializable {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode node = objectMapper.readTree(response);
             
-            List<RetailStore> retailStores = skladRequest.getRetailStoresFromSklad(node);
-            masterData = FXCollections.observableArrayList(retailStores);
+            List<ProductFolder> productFolders = skladRequest.getProductFoldersFromSklad(node);
+            masterData = FXCollections.observableArrayList(productFolders);
             
             selectButton.setOnAction(e -> {
-                ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
+                ObservableList<ProductFolder> selected = checkListView.getCheckModel().getCheckedItems();
                 StringBuilder sb = new StringBuilder();
 
                 for (var store : selected) {
@@ -98,7 +93,7 @@ public class RetailStoreController implements Initializable {
 
 private void lookSelectedHandler() {
     selectButton.setOnAction(e -> {
-        ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
+        ObservableList<ProductFolder> selected = checkListView.getCheckModel().getCheckedItems();
         StringBuilder sb = new StringBuilder();
 
         for (var store : selected) {
@@ -123,7 +118,7 @@ private void lookSelectedHandler() {
 }
 
     private void infoHandler() {
-        Label text = new Label("- Выберите точки продаж, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
+        Label text = new Label("- Выберите группы товаров, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
                                 "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
         VBox vbox = new VBox(text);
         vbox.setPadding(new Insets(15));
@@ -144,51 +139,6 @@ private void lookSelectedHandler() {
         checkListView.setItems(filteredData);
     }
 
-    @FXML
-    private void nextButtonHandler() throws IOException {
-        emptySelectedHandler();
-
-        Stage currentStage = (Stage) nextButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
-        Parent root = fxmlLoader.load();
-
-        Stage newStage = new Stage();
-        newStage.setTitle("Группы товаров");
-        newStage.setScene(new Scene(root));
-        newStage.setResizable(false);
-
-        currentStage.close();
-
-        newStage.show();
-    }
-
-    private void emptySelectedHandler() {
-        if (masterData.isEmpty()) {
-            nextButton.setOnAction(e -> {
-                ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
-                StringBuilder sb = new StringBuilder();
-
-                for (var store : selected) {
-                    sb.append(store.getName()).append("\n");
-                }
-
-                Label content = new Label();
-                if (sb.isEmpty()) {
-                    content.setText("Вы ничего не выбрали!");;
-                } else {
-                    content.setText(sb.toString());
-                }
-
-                content.setWrapText(true);
-                VBox vbox = new VBox(content);
-                vbox.setPadding(new Insets(12));
-
-                PopOver popOver = new PopOver(vbox);
-                popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-                popOver.show(selectButton);
-            });
-        } 
-    }
-
 }
+
 

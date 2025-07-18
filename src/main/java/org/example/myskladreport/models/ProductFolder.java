@@ -32,6 +32,6 @@ public class ProductFolder {
 
     @Override
     public String toString() {
-        return "ProductFolder [folderId=" + folderId + ", name=" + name + "]";
+        return this.name;
     }
 }
