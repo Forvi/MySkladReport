@@ -3,25 +3,30 @@ package org.example.myskladreport.controllers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
-
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.PopOver;
+import org.example.myskladreport.HelloApplication;
 import org.example.myskladreport.models.ProductFolder;
+import org.example.myskladreport.models.RetailStore;
 import org.example.myskladreport.utils.SkladRequest;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class ProductFolderController implements Initializable {
 
@@ -40,6 +45,11 @@ public class ProductFolderController implements Initializable {
     @FXML
     private Button selectButton;
 
+    @FXML
+    private Button backButton;
+
+    private ObservableList<RetailStore> retailStores;
+
     private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder/";
 
     ObservableList<ProductFolder> masterData;
@@ -48,10 +58,19 @@ public class ProductFolderController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        
         loadData();
         searchHandler();
         lookSelectedHandler();
         infoHandler();
+    }
+
+    public void setRetailStores(ObservableList<RetailStore> retailStores) {
+        if (retailStores.isEmpty() || Objects.isNull(retailStores))
+            throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
+
+        this.retailStores = retailStores;
     }
 
     private void loadData() {
@@ -91,31 +110,32 @@ public class ProductFolderController implements Initializable {
         }
     }
 
-private void lookSelectedHandler() {
-    selectButton.setOnAction(e -> {
-        ObservableList<ProductFolder> selected = checkListView.getCheckModel().getCheckedItems();
-        StringBuilder sb = new StringBuilder();
+    private void lookSelectedHandler() {
 
-        for (var store : selected) {
-            sb.append(store.getName()).append("\n");
-        }
+        selectButton.setOnAction(e -> {
+            ObservableList<ProductFolder> selected = checkListView.getCheckModel().getCheckedItems();
+            StringBuilder sb = new StringBuilder();
 
-        Label content = new Label();
-        if (sb.isEmpty()) {
-            content.setText("Вы ничего не выбрали!");;
-        } else {
-            content.setText(sb.toString());
-        }
+            for (var store : selected) {
+                sb.append(store.getName()).append("\n");
+            }
 
-        content.setWrapText(true);
-        VBox vbox = new VBox(content);
-        vbox.setPadding(new Insets(12));
+            Label content = new Label();
+            if (sb.isEmpty()) {
+                content.setText("Вы ничего не выбрали!");;
+            } else {
+                content.setText(sb.toString());
+            }
 
-        PopOver popOver = new PopOver(vbox);
-        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-        popOver.show(selectButton);
-    });
-}
+            content.setWrapText(true);
+            VBox vbox = new VBox(content);
+            vbox.setPadding(new Insets(12));
+
+            PopOver popOver = new PopOver(vbox);
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            popOver.show(selectButton);
+        });
+    }
 
     private void infoHandler() {
         Label text = new Label("- Выберите группы товаров, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
@@ -128,7 +148,7 @@ private void lookSelectedHandler() {
             popOver.show(questionButton);
         });
     }
-    
+
     private void searchHandler() {
         filteredData = new FilteredList<>(masterData, p -> true);
         listSearch.setOnAction(event -> {
@@ -138,6 +158,17 @@ private void lookSelectedHandler() {
 
         checkListView.setItems(filteredData);
     }
+
+@FXML
+private void backButtonHandler() throws IOException {
+    Stage stage = (Stage) backButton.getScene().getWindow();
+
+    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
+    Parent root = fxmlLoader.load();
+
+    stage.setScene(new Scene(root));
+    stage.setTitle("Точки продаж");
+}
 
 }
 

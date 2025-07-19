@@ -3,6 +3,7 @@ package org.example.myskladreport.controllers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import org.controlsfx.control.CheckListView;
@@ -59,8 +60,14 @@ public class RetailStoreController implements Initializable {
         infoHandler();
     }
 
+    public void setRetailStores(ObservableList<RetailStore> retailStores) {
+        if (retailStores.isEmpty() || Objects.isNull(retailStores))
+            throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
+
+    }
+
     private void loadData() {
-        String token = "token";
+        String token = "4a097c0a92d9988ade36bd5cf47ee9c5722a8230";
         SkladRequest skladRequest = new SkladRequest(token);
         
         try {
@@ -146,48 +153,38 @@ private void lookSelectedHandler() {
 
     @FXML
     private void nextButtonHandler() throws IOException {
-        emptySelectedHandler();
+        if (checkListView.getCheckModel().getCheckedItems().isEmpty()) {
+            showEmptySelectedHandler();
+        } else {
+            ObservableList<RetailStore> retailStores = checkListView.getCheckModel().getCheckedItems();
 
-        Stage currentStage = (Stage) nextButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
-        Parent root = fxmlLoader.load();
+            Stage currentStage = (Stage) nextButton.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
+            Parent root = fxmlLoader.load();
+            
+            ProductFolderController productFolderController = fxmlLoader.getController();
+            productFolderController.setRetailStores(retailStores);
 
-        Stage newStage = new Stage();
-        newStage.setTitle("Группы товаров");
-        newStage.setScene(new Scene(root));
-        newStage.setResizable(false);
-
-        currentStage.close();
-
-        newStage.show();
+            Stage newStage = new Stage();
+            newStage.setTitle("Группы товаров");
+            newStage.setScene(new Scene(root));
+            newStage.setResizable(false);
+            currentStage.close();
+    
+            newStage.show();
+        }
     }
 
-    private void emptySelectedHandler() {
-        if (masterData.isEmpty()) {
-            nextButton.setOnAction(e -> {
-                ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
-                StringBuilder sb = new StringBuilder();
+    private void showEmptySelectedHandler() {
+        Label content = new Label("Вы ничего не выбрали!");
 
-                for (var store : selected) {
-                    sb.append(store.getName()).append("\n");
-                }
+        content.setWrapText(true);
+        VBox vbox = new VBox(content);
+        vbox.setPadding(new Insets(12));
 
-                Label content = new Label();
-                if (sb.isEmpty()) {
-                    content.setText("Вы ничего не выбрали!");;
-                } else {
-                    content.setText(sb.toString());
-                }
-
-                content.setWrapText(true);
-                VBox vbox = new VBox(content);
-                vbox.setPadding(new Insets(12));
-
-                PopOver popOver = new PopOver(vbox);
-                popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-                popOver.show(selectButton);
-            });
-        } 
+        PopOver popOver = new PopOver(vbox);
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        popOver.show(nextButton);
     }
 
 }
