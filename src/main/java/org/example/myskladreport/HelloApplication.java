@@ -12,6 +12,7 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 640);
+        scene.getStylesheets().add(HelloApplication.class.getResource("styles/loginpass.css").toExternalForm());
         stage.setResizable(false);
         stage.setTitle("MySklad Report App");
         stage.setScene(scene);

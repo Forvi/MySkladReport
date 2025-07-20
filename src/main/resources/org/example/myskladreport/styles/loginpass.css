@@ -1,0 +1,89 @@
+.my-primary-button {
+    -fx-background-color: #0056b3;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 8 24 8 24;
+    -fx-border-width: 0;
+}
+
+.my-primary-button:hover {
+    -fx-background-color: #2176eb;
+}
+
+.primary-textfield {
+    -fx-background-color: #f7fafc;
+    -fx-border-color: #2196f3;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-focus-color: #2196f3;
+    -fx-faint-focus-color: transparent;
+    -fx-font-size: 15px;
+    -fx-padding: 6 10 6 10;
+    -fx-text-fill: #222;
+}
+
+.primary-textfield:focused {
+    -fx-border-color: #1565c0;
+    -fx-background-color: #fffefe;
+    -fx-effect: dropshadow(two-pass-box, #2196f388, 3, 0, 0, 1.5);
+}
+
+.my-checkbox .box {
+    -fx-background-color: #f7fafc;
+    -fx-border-color: #2196f3;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-width: 2;
+    -fx-min-width: 20;
+    -fx-min-height: 20;
+    -fx-max-width: 20;
+    -fx-max-height: 20;
+}
+
+.my-checkbox:selected .box {
+    -fx-background-color: #2196f3;
+    -fx-border-color: #1565c0;
+}
+
+.my-checkbox:selected .mark {
+    -fx-background-color: white;
+}
+
+.my-checkbox .text {
+    -fx-font-size: 15px;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 0 0 8;
+    -fx-font-weight: 500;
+}
+
+.my-checkbox:focused .box {
+    -fx-border-color: #42a5f5;
+    -fx-effect: dropshadow(two-pass-box, #2196f377, 2, 0, 0, 1);
+}
+
+.question-button {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #9e9e9e;
+    -fx-font-size: 16px;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-min-width: 28;
+    -fx-min-height: 28;
+    -fx-max-width: 28;
+    -fx-max-height: 28;
+    -fx-padding: 0;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-font-weight: normal;
+}
+
+.question-button:hover {
+    -fx-background-color: #e4e4e4;
+    -fx-text-fill: #7e7e7e;
+    -fx-border-color: #cacaca;
+}
