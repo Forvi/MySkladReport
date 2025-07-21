@@ -26,10 +26,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class SkladRequest {
 
-    private final String TOKEN;
+    private String TOKEN;
+
+    public SkladRequest() { }
 
     public SkladRequest(String token) {
         this.TOKEN = token;
+    }
+
+    public void setToken(String token) {
+        this.TOKEN = token;
+    }
+
+    public String getToken() {
+        return this.TOKEN;
     }
 
     /** 
@@ -239,10 +249,26 @@ public class SkladRequest {
      */
     public String getNewTokenByLogin(String login, String password) {
         try {
+            ValidateLoginData(login, password);
             HttpResponse<byte[]> response = sendPostRequest("https://api.moysklad.ru/api/remap/1.2/security/token", login, password);
             return unpackedGzip(response);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+
+    /**
+     * Валидация входных данных для аутентификации
+     * 
+     * @param login
+     * @param password
+     */
+    private void ValidateLoginData(String login, String password) {
+        if (Objects.isNull(login) || Objects.isNull(password))
+            throw new IllegalArgumentException("Login and password cannot be null");
+
+        if (login.isEmpty() || password.isEmpty())
+            throw new IllegalArgumentException("Login and password cannot be empty");
     }
 }

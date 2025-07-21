@@ -1,12 +1,16 @@
 package org.example.myskladreport.controllers;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import org.example.myskladreport.HelloApplication;
+import org.example.myskladreport.utils.SkladRequest;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,7 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-public class LoginTokenController {
+public class LoginTokenController implements Initializable {
 
     @FXML
     private Button enterButton;
@@ -35,6 +39,13 @@ public class LoginTokenController {
     @FXML
     private TextField tokenField;
 
+    private SkladRequest skladRequest;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        skladRequest = new SkladRequest();
+    }
+
     @FXML
     void onEnterButtonClick(ActionEvent event) {
 
@@ -42,6 +53,7 @@ public class LoginTokenController {
 
     @FXML
     protected void enterPassButtonHandler() throws IOException {
+
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
         Parent root = fxmlLoader.load();
@@ -58,8 +70,10 @@ public class LoginTokenController {
         newStage.show();
     }
  
-    private void checkData(String login, String password) {
-        
-    }
+
+
+
+
+
 
 }

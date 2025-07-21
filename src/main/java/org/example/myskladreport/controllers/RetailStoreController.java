@@ -52,9 +52,11 @@ public class RetailStoreController implements Initializable {
 
     private FilteredList<RetailStore> filteredData;
 
+    private SkladRequest skladRequest;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loadData();
+        masterData = FXCollections.observableArrayList();
         searchHandler();
         lookSelectedHandler();
         infoHandler();
@@ -66,19 +68,24 @@ public class RetailStoreController implements Initializable {
 
     }
 
+    public void setToken(String token) {
+        skladRequest = new SkladRequest();
+        this.skladRequest.setToken(token);
+        loadData();
+    }
+
     private void loadData() {
-        String token = "token";
-        SkladRequest skladRequest = new SkladRequest(token);
-        
         try {
-            var responseGzip = skladRequest.sendGetRequest(URL);
-            var response = skladRequest.unpackedGzip(responseGzip);
+            var responseGzip = this.skladRequest.sendGetRequest(URL);
+            var response = this.skladRequest.unpackedGzip(responseGzip);
             
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode node = objectMapper.readTree(response);
             
-            List<RetailStore> retailStores = skladRequest.getRetailStoresFromSklad(node);
-            masterData = FXCollections.observableArrayList(retailStores);
+            List<RetailStore> retailStores = this.skladRequest.getRetailStoresFromSklad(node);
+            
+            masterData.clear();
+            masterData.addAll(retailStores);
             
             selectButton.setOnAction(e -> {
                 ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
@@ -114,7 +121,7 @@ private void lookSelectedHandler() {
 
         Label content = new Label();
         if (sb.isEmpty()) {
-            content.setText("Вы ничего не выбрали!");;
+            content.setText("Вы ничего не выбрали!");
         } else {
             content.setText(sb.toString());
         }
