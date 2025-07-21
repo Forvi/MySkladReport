@@ -40,7 +40,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="640.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.myskladreport.controllers.LoginPasswordController">
+<VBox prefHeight="640.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.myskladreport.controllers.LoginTokenController">
   <children>
     <AnchorPane fx:id="tokenButton" maxHeight="-1.0" maxWidth="-1.0" prefHeight="513.0" prefWidth="546.0" VBox.vgrow="ALWAYS">
       <children>
@@ -48,7 +48,7 @@
                <font>
                   <Font size="16.0" />
                </font></Text>
-            <Button fx:id="enterButton" layoutX="740.0" layoutY="280.0" mnemonicParsing="false" onAction="#onEnterButtonClick" text="Войти">
+            <Button fx:id="enterButton" layoutX="705.0" layoutY="280.0" mnemonicParsing="false" onAction="#onEnterButtonClick" text="Войти" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
                </font></Button>
@@ -57,17 +57,17 @@
                <font>
                   <Font size="14.0" />
                </font></TextField>
-            <Text layoutX="385.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Войдите в аккаунт  ">
+            <Text layoutX="385.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Войдите в аккаунт">
                <font>
                   <Font size="24.0" />
                </font>
             </Text>
-            <Button fx:id="enterPassButton" layoutX="220.0" layoutY="280.0" mnemonicParsing="false" text="Войти по паролю">
+            <Button fx:id="enterPassButton" onAction="#enterPassButtonHandler" layoutX="220.0" layoutY="280.0" mnemonicParsing="false" text="Войти по паролю" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <CheckBox fx:id="rememberButton" layoutX="705.0" layoutY="252.0" mnemonicParsing="false" text="Запомнить" />
+            <CheckBox fx:id="rememberCheckBox" layoutX="696.0" layoutY="252.0" mnemonicParsing="false" text="Запомнить" styleClass="my-checkbox"/>
       </children>
     </AnchorPane>
   </children>

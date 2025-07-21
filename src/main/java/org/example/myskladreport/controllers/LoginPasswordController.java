@@ -30,23 +30,45 @@ public class LoginPasswordController implements Initializable {
     private Button questionButton;
 
     @FXML
+    private Button enterTokenButton;
+
+    @FXML
     protected void onEnterButtonClick() throws IOException {
 
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
+        currentStage.centerOnScreen();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
         Parent root = fxmlLoader.load();
         
         Stage newStage = new Stage();
         newStage.setTitle("Точки продаж");
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(HelloApplication.class.getResource("styles/loginpass.css").toExternalForm());
+        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        
+        newStage.centerOnScreen();
         currentStage.close();
         
         newStage.show();
 
+    }
+
+    @FXML
+    protected void onEnterTokenButton() throws IOException {
+        Stage currentStage = (Stage) enterButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-token.fxml"));
+        Parent root = fxmlLoader.load();
+        
+        Stage newStage = new Stage();
+        newStage.setTitle("MySklad Report App");
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+        newStage.setScene(scene);
+        newStage.setResizable(false);
+        newStage.centerOnScreen();
+        currentStage.close();
+        
+        newStage.show();
     }
 
     @Override

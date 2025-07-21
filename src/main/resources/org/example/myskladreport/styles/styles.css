@@ -1,5 +1,5 @@
 .my-primary-button {
-    -fx-background-color: #0056b3;
+    -fx-background-color: #1263ee;
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
@@ -10,16 +10,30 @@
 }
 
 .my-primary-button:hover {
-    -fx-background-color: #2176eb;
+    -fx-background-color: #004BCC;
+}
+
+.my-exit-button {
+    -fx-background-color: #ef233c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 4 12 4 12;
+    -fx-border-width: 0;
+}
+
+.my-exit-button:hover {
+    -fx-background-color: #d90429;
 }
 
 .primary-textfield {
     -fx-background-color: #f7fafc;
-    -fx-border-color: #2196f3;
+    -fx-border-color: #1263ee;
     -fx-border-width: 2;
     -fx-border-radius: 6;
     -fx-background-radius: 6;
-    -fx-focus-color: #2196f3;
+    -fx-focus-color: #1263ee;
     -fx-faint-focus-color: transparent;
     -fx-font-size: 15px;
     -fx-padding: 6 10 6 10;
@@ -27,14 +41,14 @@
 }
 
 .primary-textfield:focused {
-    -fx-border-color: #1565c0;
+    -fx-border-color: #1263ee;
     -fx-background-color: #fffefe;
     -fx-effect: dropshadow(two-pass-box, #2196f388, 3, 0, 0, 1.5);
 }
 
 .my-checkbox .box {
     -fx-background-color: #f7fafc;
-    -fx-border-color: #2196f3;
+    -fx-border-color: #1263ee;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-border-width: 2;
@@ -45,8 +59,8 @@
 }
 
 .my-checkbox:selected .box {
-    -fx-background-color: #2196f3;
-    -fx-border-color: #1565c0;
+    -fx-background-color: #1263ee;
+    -fx-border-color: #004BCC;
 }
 
 .my-checkbox:selected .mark {
@@ -61,7 +75,7 @@
 }
 
 .my-checkbox:focused .box {
-    -fx-border-color: #42a5f5;
+    -fx-border-color: #1263ee;
     -fx-effect: dropshadow(two-pass-box, #2196f377, 2, 0, 0, 1);
 }
 

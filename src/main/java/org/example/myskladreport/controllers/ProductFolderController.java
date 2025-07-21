@@ -74,7 +74,7 @@ public class ProductFolderController implements Initializable {
     }
 
     private void loadData() {
-        String token = "4a097c0a92d9988ade36bd5cf47ee9c5722a8230";
+        String token = "token";
         SkladRequest skladRequest = new SkladRequest(token);
         
         try {
@@ -166,7 +166,9 @@ private void backButtonHandler() throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
     Parent root = fxmlLoader.load();
 
-    stage.setScene(new Scene(root));
+    Scene scene = new Scene(root);
+    scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+    stage.setScene(scene);
     stage.setTitle("Точки продаж");
 }
 

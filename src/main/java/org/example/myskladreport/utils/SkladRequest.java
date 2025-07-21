@@ -5,9 +5,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -168,6 +171,35 @@ public class SkladRequest {
     }
 
     /**
+     * Отправка POST-запроса с данными от аккаунта для МойСклад
+     * Используется для получения токена
+     * 
+     * @param url URL, по которому необходимо отправить запрос
+     * @return HttpResponse<byte[]> ответ на запрос в виде массива байт (сжат в gzip)
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private HttpResponse<byte[]> sendPostRequest(String url, String login, String password) throws IOException, InterruptedException {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            String auth = String.format("%s:%s", login, password);
+            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .POST(BodyPublishers.ofString(""))
+                    .header("Accept", "application/json;charset=utf-8")
+                    .header("Authorization", "Basic " + encodedAuth)
+                    .header("Accept-Encoding", "gzip")
+                    .build();
+
+            return client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException("Error: ", e);
+        }
+    }
+
+    /**
      * Распаковка данных, которые пришли по запросу
      * 
      * @param response ответ запроса в виде массива байтов
@@ -196,5 +228,21 @@ public class SkladRequest {
         }
 
         return responseBody;
+    }
+
+    /**
+     * Получение токена на основе данных от аккаунта МойСклад
+     * 
+     * @param login логин от аккаунта
+     * @param password пароль от аккаунта
+     * @return String токен
+     */
+    public String getNewTokenByLogin(String login, String password) {
+        try {
+            HttpResponse<byte[]> response = sendPostRequest("https://api.moysklad.ru/api/remap/1.2/security/token", login, password);
+            return unpackedGzip(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

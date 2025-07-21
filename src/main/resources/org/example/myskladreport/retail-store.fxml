@@ -44,25 +44,27 @@
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="513.0" prefWidth="546.0" VBox.vgrow="ALWAYS">
       <children>
-            <Text layoutX="170.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Точки продаж">
+            <Text layoutX="222.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Точки продаж">
                <font>
                   <Font size="16.0" />
-               </font></Text>
-            <Button fx:id="nextButton" layoutX="693.0" layoutY="482.0" mnemonicParsing="false" onAction="#nextButtonHandler" text="Далее" styleClass="my-primary-button">
+               </font>
+            </Text>
+            <Button fx:id="nextButton" layoutX="708.0" layoutY="494.0" mnemonicParsing="false" onAction="#nextButtonHandler" text="Далее" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
-               </font></Button>
+               </font>
+            </Button>
             <Button fx:id="questionButton" layoutX="985.0" layoutY="602.0" mnemonicParsing="false" text="?" styleClass="question-button"/>
-            <TextField fx:id="listSearch" layoutX="170.0" layoutY="132.0" prefHeight="24.0" prefWidth="584.0" promptText="Поиск..." styleClass="primary-textfield">
+            <TextField fx:id="listSearch" layoutX="222.0" layoutY="132.0" prefHeight="24.0" prefWidth="584.0" promptText="Поиск..." styleClass="primary-textfield">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-            <Button fx:id="selectButton" layoutX="170.0" layoutY="482.0" mnemonicParsing="false" text="Выбрано" styleClass="my-primary-button">
+            <Button fx:id="selectButton" layoutX="222.0" layoutY="494.0" mnemonicParsing="false" text="Выбрано" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
                </font></Button>
-            <CheckListView fx:id="checkListView" layoutX="170.0" layoutY="166.0" prefHeight="308.0" prefWidth="584.0" styleClass="my-checkbox"/>
-            <Button fx:id="exitButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Выйти">
+            <CheckListView fx:id="checkListView" layoutX="222.0" layoutY="178.0" prefHeight="308.0" prefWidth="584.0" styleClass="my-checkbox"/>
+            <Button fx:id="exitButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Выйти" styleClass="my-exit-button">
                <font>
                   <Font size="14.0" />
                </font>

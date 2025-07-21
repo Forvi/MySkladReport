@@ -67,7 +67,7 @@ public class RetailStoreController implements Initializable {
     }
 
     private void loadData() {
-        String token = "4a097c0a92d9988ade36bd5cf47ee9c5722a8230";
+        String token = "token";
         SkladRequest skladRequest = new SkladRequest(token);
         
         try {
@@ -167,7 +167,9 @@ private void lookSelectedHandler() {
 
             Stage newStage = new Stage();
             newStage.setTitle("Группы товаров");
-            newStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+            newStage.setScene(scene);
             newStage.setResizable(false);
             currentStage.close();
     
