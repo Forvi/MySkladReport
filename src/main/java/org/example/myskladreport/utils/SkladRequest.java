@@ -3,6 +3,7 @@ package org.example.myskladreport.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,11 +18,10 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
-
 import org.example.myskladreport.models.ProductFolder;
 import org.example.myskladreport.models.RetailStore;
-
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class SkladRequest {
@@ -77,7 +77,7 @@ public class SkladRequest {
      * Получить точки продаж.
      * Записываются все сущности в модель RetailStore.
      * 
-     * URL: https://api.moysklad.ru/api/remap/1.2/report/profit/bysaleschannel
+     * URL: https://api.moysklad.ru/api/remap/1.2/entity/retailstore
      * @param jsonNode JSON со всеми точками продаж
      * @return List<RetailStore> список точек продаж
      */
@@ -87,16 +87,15 @@ public class SkladRequest {
             List<RetailStore> retailStores = new ArrayList<>();
 
             for (var e : rows) {
-                JsonNode salesChannel = e.get("salesChannel");
-
-                String name = salesChannel.get("name").asText();
-                UUID id = getIdFromMeta(salesChannel);
-                Double sellSum = e.get("sellSum").asDouble() / 100;
+                String name = e.get("name").asText();
+                UUID id = transformStringToUuid(e.get("id").asText());
+                JsonNode store = e.get("store");
+                UUID storeId = getIdFromMeta(store);
 
                 RetailStore retailStore = new RetailStore();
                 retailStore.setItemID(id);
                 retailStore.setName(name);
-                retailStore.setRevenue(sellSum);
+                retailStore.setStoreId(storeId);
 
                 retailStores.add(retailStore);
             }
@@ -115,7 +114,7 @@ public class SkladRequest {
      */
     private UUID getIdFromMeta(JsonNode node) {
         if (node == null)
-            throw new IllegalArgumentException("Sales channel cannot be null!");
+            throw new IllegalArgumentException("Json Node cannot be null!");
 
         if (!node.has("meta"))
             throw new IllegalArgumentException("Meta was not found");
@@ -139,7 +138,7 @@ public class SkladRequest {
      * @return UUID преобразованная в UUID строка
      */
     private UUID transformStringToUuid(String id) {
-        Pattern pattern = Pattern.compile("id=([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})");
+        Pattern pattern = Pattern.compile("([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})");
 
         if (id.isEmpty() || Objects.isNull(id))
             throw new IllegalArgumentException("Id cannot be null or empty!");
@@ -270,5 +269,54 @@ public class SkladRequest {
 
         if (login.isEmpty() || password.isEmpty())
             throw new IllegalArgumentException("Login and password cannot be empty");
+    }
+
+
+    
+    /** 
+     * Получить выручку по точке продаж и группе товаров
+     * 
+     * @param retailStoreId идентификатор точки продаж
+     * @param productFolderId идентификатор группы товаров
+     * @return BigDecimal выручка
+     */
+    public BigDecimal getRevenue(UUID retailStoreId, UUID productFolderId) {
+        try {
+            String url = "https://api.moysklad.ru/api/remap/1.2/report/profit/byproduct?" +
+                        "filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" + retailStoreId +
+                        ";productFolder=https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" + productFolderId;
+            var responseGzip = sendGetRequest(url);
+            var response = unpackedGzip(responseGzip);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode node = objectMapper.readTree(response);
+
+            ArrayNode rows = (ArrayNode) node.get("rows");
+            return calculateRevenue(rows);
+            
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /** 
+     * Общая сумма выручки в группе товаров
+     * 
+     * @param rows
+     * @return BigDecimal
+     */
+    private BigDecimal calculateRevenue(ArrayNode rows) {
+        BigDecimal revenue = BigDecimal.ZERO;
+
+        try {
+            for (var e : rows) {
+                BigDecimal sellPrice = BigDecimal.valueOf(e.get("sellPrice").asDouble()).divide(BigDecimal.valueOf(100));
+                revenue = revenue.add(sellPrice);
+            }
+
+            return revenue;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

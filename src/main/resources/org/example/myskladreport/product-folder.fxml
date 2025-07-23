@@ -44,12 +44,12 @@
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="513.0" prefWidth="546.0" VBox.vgrow="ALWAYS">
       <children>
-            <Text layoutX="170.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Группы товаров">
+            <Text layoutX="222.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Группы товаров">
                <font>
                   <Font size="16.0" />
                </font>
             </Text>
-            <Button fx:id="nextButton" layoutX="708.0" layoutY="494.0" mnemonicParsing="false" text="Далее" styleClass="my-primary-button">
+            <Button fx:id="nextButton" onAction="#nextButtonHandler" layoutX="708.0" layoutY="494.0" mnemonicParsing="false" text="Далее" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
                </font>
@@ -64,7 +64,7 @@
                   <Font size="14.0" />
                </font></Button>
             <CheckListView fx:id="checkListView" layoutX="222.0" layoutY="178.0" prefHeight="308.0" prefWidth="584.0" styleClass="my-checkbox"/>
-            <Button fx:id="backButton" onAction="#backButtonHandler" layoutX="18.0" layoutY="8.0" mnemonicParsing="false" text="←" />
+            <Button fx:id="backButton" onAction="#backButtonHandler" layoutX="18.0" layoutY="8.0" mnemonicParsing="false" text="←" styleClass="back-button"/>
       </children>
     </AnchorPane>
   </children>

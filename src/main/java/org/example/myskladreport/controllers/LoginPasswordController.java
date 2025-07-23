@@ -3,13 +3,10 @@ package org.example.myskladreport.controllers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
 import org.example.myskladreport.utils.SkladRequest;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -18,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -31,7 +29,7 @@ public class LoginPasswordController implements Initializable {
     private TextField loginField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
     private Button questionButton;
@@ -41,10 +39,10 @@ public class LoginPasswordController implements Initializable {
 
     private SkladRequest skladRequest;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         skladRequest = new SkladRequest();
+        infoHandler();
     }
 
     @FXML
@@ -77,7 +75,6 @@ public class LoginPasswordController implements Initializable {
         currentStage.close();
         
         newStage.show();
-
     }
 
     @FXML
@@ -97,6 +94,19 @@ public class LoginPasswordController implements Initializable {
         currentStage.close();
         
         newStage.show();
+    }
+
+    private void infoHandler() {
+        Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад\n" + 
+                                "- Если Вы не хотите каждый раз вводить данные для входа, активируйте 'Запомнить'\n" +
+                                "- Не переживайте за данные, при функции 'Запомнить' - логин и пароль шифруются");
+        VBox vbox = new VBox(text);
+        vbox.setPadding(new Insets(15));
+        PopOver popOver = new PopOver(vbox);
+        questionButton.setOnAction(e -> {
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            popOver.show(questionButton);
+        });
     }
 
     private void showEmptyFieldHandler() {

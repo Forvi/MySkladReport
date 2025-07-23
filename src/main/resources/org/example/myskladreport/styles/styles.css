@@ -101,3 +101,11 @@
     -fx-text-fill: #7e7e7e;
     -fx-border-color: #cacaca;
 }
+
+.back-button {
+    -fx-background: none;
+    -fx-text-fill: #9e9e9e;
+    -fx-font-size: 22px;
+    -fx-cursor: hand;
+    -fx-font-weight: normal;
+}

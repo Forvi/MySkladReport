@@ -1,18 +1,18 @@
 package org.example.myskladreport.models;
 
 import java.util.UUID;
+
 public class RetailStore {
 
     private UUID itemID;
     private String name;
-    private Double revenue;
+    private UUID storeId;
 
     public RetailStore() { }
 
-    public RetailStore(UUID itemID, String name, Double revenue) {
+    public RetailStore(UUID itemID, String name) {
         this.itemID = itemID;
         this.name = name;
-        this.revenue = revenue;
     }
 
     public UUID getItemID() {
@@ -23,10 +23,6 @@ public class RetailStore {
         return name;
     }
 
-    public Double getRevenue() {
-        return revenue;
-    }
-
     public void setItemID(UUID itemID) {
         this.itemID = itemID;
     }
@@ -35,8 +31,12 @@ public class RetailStore {
         this.name = name;
     }
 
-    public void setRevenue(Double revenue) {
-        this.revenue = revenue;
+    public UUID getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
     }
 
     @Override

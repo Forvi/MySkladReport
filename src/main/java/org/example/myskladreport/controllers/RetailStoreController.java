@@ -46,7 +46,7 @@ public class RetailStoreController implements Initializable {
     @FXML
     private Button selectButton;
 
-    private final String URL = "https://api.moysklad.ru/api/remap/1.2/report/profit/bysaleschannel";
+    private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/retailstore";
 
     ObservableList<RetailStore> masterData;
 
@@ -54,6 +54,7 @@ public class RetailStoreController implements Initializable {
 
     private SkladRequest skladRequest;
 
+    // ======== INIT =============
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         masterData = FXCollections.observableArrayList();
@@ -62,18 +63,25 @@ public class RetailStoreController implements Initializable {
         infoHandler();
     }
 
+
+    // ======== SETTERS =============
     public void setRetailStores(ObservableList<RetailStore> retailStores) {
         if (retailStores.isEmpty() || Objects.isNull(retailStores))
             throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
-
     }
 
     public void setToken(String token) {
-        skladRequest = new SkladRequest();
+        this.skladRequest = new SkladRequest();
         this.skladRequest.setToken(token);
         loadData();
     }
 
+    // ======== HANDLERS =============
+
+    /** 
+     * Загрузка всех точек продаж
+     * Обработка кнопки "Выбрано"
+     */
     private void loadData() {
         try {
             var responseGzip = this.skladRequest.sendGetRequest(URL);
@@ -83,7 +91,6 @@ public class RetailStoreController implements Initializable {
             JsonNode node = objectMapper.readTree(response);
             
             List<RetailStore> retailStores = this.skladRequest.getRetailStoresFromSklad(node);
-            
             masterData.clear();
             masterData.addAll(retailStores);
             
@@ -110,32 +117,39 @@ public class RetailStoreController implements Initializable {
         }
     }
 
-private void lookSelectedHandler() {
-    selectButton.setOnAction(e -> {
-        ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
-        StringBuilder sb = new StringBuilder();
+    /**
+     * Показывает выбранные элементы либо его отсутствие 
+     */
+    private void lookSelectedHandler() {
+        selectButton.setOnAction(e -> {
+            ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
+            StringBuilder sb = new StringBuilder();
 
-        for (var store : selected) {
-            sb.append(store.getName()).append("\n");
-        }
+            for (var store : selected) {
+                sb.append(store.getName()).append("\n");
+            }
 
-        Label content = new Label();
-        if (sb.isEmpty()) {
-            content.setText("Вы ничего не выбрали!");
-        } else {
-            content.setText(sb.toString());
-        }
+            Label content = new Label();
+            if (sb.isEmpty()) {
+                content.setText("Вы ничего не выбрали!");
+            } else {
+                content.setText(sb.toString());
+            }
 
-        content.setWrapText(true);
-        VBox vbox = new VBox(content);
-        vbox.setPadding(new Insets(12));
+            content.setWrapText(true);
+            VBox vbox = new VBox(content);
+            vbox.setPadding(new Insets(12));
 
-        PopOver popOver = new PopOver(vbox);
-        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-        popOver.show(selectButton);
-    });
-}
+            PopOver popOver = new PopOver(vbox);
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            popOver.show(selectButton);
+        });
+    }
 
+    /**
+     * Обработчик кнопки "?"
+     * Показывает информацию
+     */
     private void infoHandler() {
         Label text = new Label("- Выберите точки продаж, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
                                 "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
@@ -148,6 +162,10 @@ private void lookSelectedHandler() {
         });
     }
     
+    /**
+     * Обработчик текстового поля
+     * Поиск элементов по части названию
+     */
     private void searchHandler() {
         filteredData = new FilteredList<>(masterData, p -> true);
         listSearch.setOnAction(event -> {
@@ -158,6 +176,12 @@ private void lookSelectedHandler() {
         checkListView.setItems(filteredData);
     }
 
+    /** 
+     * Обработка кнопки "Далее"
+     * Загружается следующее окно "Группы товаров" и передается вся информация
+     * 
+     * @throws IOException
+     */
     @FXML
     private void nextButtonHandler() throws IOException {
         if (checkListView.getCheckModel().getCheckedItems().isEmpty()) {
@@ -169,8 +193,10 @@ private void lookSelectedHandler() {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
             Parent root = fxmlLoader.load();
             
+            String token = skladRequest.getToken();
             ProductFolderController productFolderController = fxmlLoader.getController();
             productFolderController.setRetailStores(retailStores);
+            productFolderController.setToken(token);
 
             Stage newStage = new Stage();
             newStage.setTitle("Группы товаров");
@@ -184,6 +210,9 @@ private void lookSelectedHandler() {
         }
     }
 
+    /**
+     * Показывает отсутсвие выбранных точек продаж
+     */
     private void showEmptySelectedHandler() {
         Label content = new Label("Вы ничего не выбрали!");
 

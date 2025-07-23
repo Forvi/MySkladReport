@@ -47,8 +47,27 @@ public class LoginTokenController implements Initializable {
     }
 
     @FXML
-    void onEnterButtonClick(ActionEvent event) {
+    void onEnterButtonClick(ActionEvent event) throws IOException {
+        String token = tokenField.getText();
 
+        Stage currentStage = (Stage) enterButton.getScene().getWindow();
+        currentStage.centerOnScreen();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
+        Parent root = fxmlLoader.load();
+        
+        RetailStoreController retailStoreController = fxmlLoader.getController();
+        retailStoreController.setToken(token);
+
+        Stage newStage = new Stage();
+        newStage.setTitle("Точки продаж");
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+        newStage.setScene(scene);
+        newStage.setResizable(false);
+        newStage.centerOnScreen();
+        currentStage.close();
+        
+        newStage.show();
     }
 
     @FXML

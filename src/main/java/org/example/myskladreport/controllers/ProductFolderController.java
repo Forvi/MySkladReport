@@ -56,16 +56,21 @@ public class ProductFolderController implements Initializable {
 
     private FilteredList<ProductFolder> filteredData;
 
+    private SkladRequest skladRequest;
+    
+    // ======== INIT =============
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        masterData = FXCollections.observableArrayList();
+        filteredData = new FilteredList<>(masterData, p -> true);
+        checkListView.setItems(filteredData);
 
-        
-        loadData();
         searchHandler();
         lookSelectedHandler();
         infoHandler();
     }
 
+    // ======== SETTERS =============
     public void setRetailStores(ObservableList<RetailStore> retailStores) {
         if (retailStores.isEmpty() || Objects.isNull(retailStores))
             throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
@@ -73,19 +78,24 @@ public class ProductFolderController implements Initializable {
         this.retailStores = retailStores;
     }
 
+    public void setToken(String token) {
+        this.skladRequest = new SkladRequest();
+        this.skladRequest.setToken(token);
+        loadData();
+    }
+
+    // ======== HANDLERS =============
     private void loadData() {
-        String token = "token";
-        SkladRequest skladRequest = new SkladRequest(token);
-        
         try {
-            var responseGzip = skladRequest.sendGetRequest(URL);
-            var response = skladRequest.unpackedGzip(responseGzip);
+            var responseGzip = this.skladRequest.sendGetRequest(URL);
+            var response = this.skladRequest.unpackedGzip(responseGzip);
             
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode node = objectMapper.readTree(response);
             
-            List<ProductFolder> productFolders = skladRequest.getProductFoldersFromSklad(node);
-            masterData = FXCollections.observableArrayList(productFolders);
+            List<ProductFolder> productFolders = this.skladRequest.getProductFoldersFromSklad(node);
+            masterData.clear();
+            masterData.addAll(productFolders);
             
             selectButton.setOnAction(e -> {
                 ObservableList<ProductFolder> selected = checkListView.getCheckModel().getCheckedItems();
@@ -107,6 +117,30 @@ public class ProductFolderController implements Initializable {
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void nextButtonHandler() {
+        ObservableList<ProductFolder> productFolders = checkListView.getCheckModel().getCheckedItems();
+
+        try {
+            for (var productFolder : productFolders) {
+                
+                for (var retailStore : retailStores) {
+                    System.out.println("Магазин: " + retailStore.getName());
+                    var revenue = skladRequest.getRevenue(
+                                retailStore.getStoreId(), 
+                                productFolder.getFolderId()
+                    );
+
+                    System.out.println("Группа товаров: " + productFolder.getName() + " Выручка: " + revenue);
+                }
+
+                System.out.println("__________________\n");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -159,19 +193,18 @@ public class ProductFolderController implements Initializable {
         checkListView.setItems(filteredData);
     }
 
-@FXML
-private void backButtonHandler() throws IOException {
-    Stage stage = (Stage) backButton.getScene().getWindow();
+    @FXML
+    private void backButtonHandler() throws IOException {
+        Stage stage = (Stage) backButton.getScene().getWindow();
 
-    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
-    Parent root = fxmlLoader.load();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
+        Parent root = fxmlLoader.load();
 
-    Scene scene = new Scene(root);
-    scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-    stage.setScene(scene);
-    stage.setTitle("Точки продаж");
-}
-
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+        stage.setScene(scene);
+        stage.setTitle("Точки продаж");
+    }
 }
 
 
