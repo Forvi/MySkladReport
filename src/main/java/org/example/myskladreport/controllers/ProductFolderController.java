@@ -125,16 +125,16 @@ public class ProductFolderController implements Initializable {
         ObservableList<ProductFolder> productFolders = checkListView.getCheckModel().getCheckedItems();
 
         try {
-            for (var productFolder : productFolders) {
+            for (var retailStore : retailStores) {
+                System.out.println("Магазин: " + retailStore.getName());
                 
-                for (var retailStore : retailStores) {
-                    System.out.println("Магазин: " + retailStore.getName());
+                for (var productFolder : productFolders) {
                     var revenue = skladRequest.getRevenue(
                                 retailStore.getStoreId(), 
                                 productFolder.getFolderId()
                     );
 
-                    System.out.println("Группа товаров: " + productFolder.getName() + " Выручка: " + revenue);
+                    System.out.println("Группа товаров: " + productFolder.getName() + ", Выручка: " + revenue);
                 }
 
                 System.out.println("__________________\n");

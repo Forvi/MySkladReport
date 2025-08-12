@@ -12,6 +12,14 @@ import javax.crypto.spec.SecretKeySpec;
 import org.example.myskladreport.exceptions.NotValidLengthException;
 import org.example.myskladreport.interfaces.PassCipher;
 
+/**
+ * <p>Позволяет шифровать данные, реализаует интерфейс PassCipher.</p>
+ * <p>Использует алгоритм <b>AES-Шифрование</b>.</p>
+ * <p>AES — симметричный алгоритм блочного шифрования, принятый в качестве стандарта.</p>
+ * 
+ * @param IV_SIZE вектор инициализации
+ * @author Lavrov Nikita
+ */
 public class AesCipher implements PassCipher {
     private final int IV_SIZE;
 
@@ -21,7 +29,7 @@ public class AesCipher implements PassCipher {
 
     
     /** 
-     * Шифрование текста по принципу [вектор инициализации + шифр].
+     * <p>Шифрование текста по принципу [вектор инициализации + шифр].</p>
      * 
      * @param secretKey секретный ключ
      * @param plainText текст для шишфрования
@@ -59,7 +67,7 @@ public class AesCipher implements PassCipher {
     }
 
     /** 
-     * Расшифровка
+     * <p>Расшифровка</p>
      * 
      * @param secretKey секретный ключ
      * @param cipherText зашифрованный текст
@@ -95,7 +103,7 @@ public class AesCipher implements PassCipher {
     }
 
     /** 
-     * Валидация ключа на null, пустоту и длину.
+     * <p>Валидация ключа на null, пустоту и длину.</p>
      * 
      * @param key ключ
      */
@@ -117,7 +125,7 @@ public class AesCipher implements PassCipher {
     }
 
     /** 
-     * Валидация паролдя на null, пустоту,и длину
+     * <p>Валидация паролдя на null, пустоту,и длину</p>
      * 
      * @param pass
      */
@@ -139,7 +147,7 @@ public class AesCipher implements PassCipher {
     }
 
     /** 
-     * Генерация случайного инициализирующего вектора
+     * <p>Генерация случайного инициализирующего вектора</p>
      * 
      * @return byte[]
      */
@@ -150,7 +158,7 @@ public class AesCipher implements PassCipher {
     }
 
     /** 
-     * Очистка ключа из памяти
+     * <p>Очистка ключа из памяти</p>
      * 
      * @param args
      */

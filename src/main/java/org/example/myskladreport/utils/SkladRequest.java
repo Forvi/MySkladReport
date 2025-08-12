@@ -24,6 +24,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+/**
+ * <p>Класс для взаимодействия с API МойСклад.</p>
+ * <p>Реализованы методы для получения точек продаж, товаров по точке продаж, выручки и пр.</p>
+ * ----
+ * 
+ * @param TOKEN хранит API-Токен для аутентификации в МойСклад
+ * @author Lavrov Nikita
+ */
 public class SkladRequest {
 
     private String TOKEN;
@@ -43,10 +51,10 @@ public class SkladRequest {
     }
 
     /** 
-     * Получить группы товаров.
-     * Записываются все сущности в модель ProductFolder.
+     * <p>Получить группы товаров.</p>
+     * <p>Записываются все сущности в модель <b>ProductFolder</b>.</p>
      * 
-     * URL: https://api.moysklad.ru/api/remap/1.2/entity/productfolder/
+     * <p>URL: <a>https://api.moysklad.ru/api/remap/1.2/entity/productfolder/</a></p>
      * @param jsonNode JSON со всеми группами товаром
      * @return List<ProductFolder> список групп товаров
      */
@@ -74,10 +82,10 @@ public class SkladRequest {
     }
 
     /**
-     * Получить точки продаж.
-     * Записываются все сущности в модель RetailStore.
+     * <p>Получить точки продаж.</p>
+     * <p>Записываются все сущности в модель RetailStore.</p>
      * 
-     * URL: https://api.moysklad.ru/api/remap/1.2/entity/retailstore
+     * <p>URL: <a>https://api.moysklad.ru/api/remap/1.2/entity/retailstore</a></p>
      * @param jsonNode JSON со всеми точками продаж
      * @return List<RetailStore> список точек продаж
      */
@@ -107,7 +115,7 @@ public class SkladRequest {
     }
 
     /**
-     * Получиает ID из json'а и преобразует в UUID
+     * <p>Получиает ID из json'а и преобразует в UUID</p>
      * 
      * @param jsonObject json, который содержит META-инофрмацию
      * @return UUID уникальный идентификатор
@@ -132,7 +140,7 @@ public class SkladRequest {
     }
 
     /**
-     * Преобразует строку с уникальным идентификатором в UUID
+     * <p>Преобразует строку с уникальным идентификатором в <b>UUID</b>.</p>
      * 
      * @param id UUID в String
      * @return UUID преобразованная в UUID строка
@@ -156,7 +164,7 @@ public class SkladRequest {
     }
 
     /**
-     * Отправка GET-запроса с параметрами для МойСклад
+     * <p>Отправка GET-запроса с параметрами для МойСклад.</p>
      * 
      * @param url URL, по которому необходимо отправить запрос
      * @return HttpResponse<byte[]> ответ на запрос в виде массива байт (сжат в gzip)
@@ -180,8 +188,8 @@ public class SkladRequest {
     }
 
     /**
-     * Отправка POST-запроса с данными от аккаунта для МойСклад
-     * Используется для получения токена
+     * <p>Отправка POST-запроса с данными от аккаунта для МойСклад.</p>
+     * <p>Используется для получения токена.</p>
      * 
      * @param url URL, по которому необходимо отправить запрос
      * @return HttpResponse<byte[]> ответ на запрос в виде массива байт (сжат в gzip)
@@ -209,7 +217,7 @@ public class SkladRequest {
     }
 
     /**
-     * Распаковка данных, которые пришли по запросу
+     * <p>Распаковка данных, которые пришли по запросу.</p>
      * 
      * @param response ответ запроса в виде массива байтов
      * @return String распакованная строка в виде json
@@ -240,7 +248,7 @@ public class SkladRequest {
     }
 
     /**
-     * Получение токена на основе данных от аккаунта МойСклад
+     * <p>Получение токена на основе данных от аккаунта МойСклад.</p>
      * 
      * @param login логин от аккаунта
      * @param password пароль от аккаунта
@@ -258,7 +266,7 @@ public class SkladRequest {
 
 
     /**
-     * Валидация входных данных для аутентификации
+     * <p>Валидация входных данных для аутентификации.</p>
      * 
      * @param login
      * @param password
@@ -274,7 +282,7 @@ public class SkladRequest {
 
     
     /** 
-     * Получить выручку по точке продаж и группе товаров
+     * <p>Получить выручку по точке продаж и группе товаров.</p>
      * 
      * @param retailStoreId идентификатор точки продаж
      * @param productFolderId идентификатор группы товаров
@@ -300,7 +308,7 @@ public class SkladRequest {
     }
 
     /** 
-     * Общая сумма выручки в группе товаров
+     * <p>Общая сумма выручки в группе товаров.</p>
      * 
      * @param rows
      * @return BigDecimal
@@ -310,11 +318,11 @@ public class SkladRequest {
 
         try {
             for (var e : rows) {
-                BigDecimal sellPrice = BigDecimal.valueOf(e.get("sellPrice").asDouble()).divide(BigDecimal.valueOf(100));
+                BigDecimal sellPrice = BigDecimal.valueOf(e.get("sellPrice").asDouble());
                 revenue = revenue.add(sellPrice);
             }
 
-            return revenue;
+            return revenue.divide(BigDecimal.valueOf(100));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

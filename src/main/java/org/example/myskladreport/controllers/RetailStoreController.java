@@ -52,6 +52,8 @@ public class RetailStoreController implements Initializable {
 
     private FilteredList<RetailStore> filteredData;
 
+    private List<RetailStore> retailStores;
+
     private SkladRequest skladRequest;
 
     // ======== INIT =============
@@ -59,6 +61,7 @@ public class RetailStoreController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         masterData = FXCollections.observableArrayList();
         searchHandler();
+        checkListView.setItems(filteredData);
         lookSelectedHandler();
         infoHandler();
     }
@@ -168,12 +171,23 @@ public class RetailStoreController implements Initializable {
      */
     private void searchHandler() {
         filteredData = new FilteredList<>(masterData, p -> true);
-        listSearch.setOnAction(event -> {
-            String newVal = listSearch.getText();
-            filteredData.setPredicate(store -> store.getName().toLowerCase().contains(newVal.toLowerCase()));
+        listSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Сохраняем выбранные элементы
+            ObservableList<RetailStore> selectedItems = checkListView.getCheckModel().getCheckedItems();
+            
+            // Применяем фильтр
+            filteredData.setPredicate(store -> 
+                newValue == null || newValue.isEmpty() || 
+                store.getName().toLowerCase().contains(newValue.toLowerCase()));
+            
+            // Восстанавливаем выбранные элементы
+            checkListView.getCheckModel().clearChecks();
+            for (RetailStore item : selectedItems) {
+                if (filteredData.contains(item)) {
+                    checkListView.getCheckModel().check(item);
+                }
+            }
         });
-
-        checkListView.setItems(filteredData);
     }
 
     /** 
