@@ -2,6 +2,7 @@ package org.example.myskladreport.controllers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
@@ -57,6 +58,11 @@ public class LoginPasswordController implements Initializable {
 
         String token = generateToken(login, password);
 
+        if (Objects.isNull(token)) {
+            showErrorFieldHandler();
+            return;
+        }
+
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
         currentStage.centerOnScreen();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
@@ -80,7 +86,6 @@ public class LoginPasswordController implements Initializable {
     @FXML
     protected void onEnterTokenButton() throws IOException {
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
-        System.out.println("onEnterTokenButton вызван");
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-token.fxml"));
         Parent root = fxmlLoader.load();
         
@@ -121,12 +126,29 @@ public class LoginPasswordController implements Initializable {
         popOver.show(enterButton);
     }
 
+    private void showErrorFieldHandler() {
+        Label content = new Label("Ошибка аутентификации: Неправильный пароль или имя пользователя!");
+
+        content.setWrapText(true);
+        VBox vbox = new VBox(content);
+        vbox.setPadding(new Insets(12));
+
+        PopOver popOver = new PopOver(vbox);
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        popOver.show(enterButton);
+    }
+
     private String generateToken(String login, String password) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String response = skladRequest.getNewTokenByLogin(login, password);
-            String token = objectMapper.readTree(response).get("access_token").asText();
-            return token;
+            var token = objectMapper.readTree(response).get("access_token");
+
+            if (Objects.isNull(token)) {
+                return null;
+            }
+
+            return token.asText();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

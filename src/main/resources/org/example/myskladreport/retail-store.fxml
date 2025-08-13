@@ -64,7 +64,7 @@
                   <Font size="14.0" />
                </font></Button>
             <CheckListView fx:id="checkListView" layoutX="222.0" layoutY="178.0" prefHeight="308.0" prefWidth="584.0" styleClass="my-checkbox"/>
-            <Button fx:id="exitButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Выйти" styleClass="my-exit-button">
+            <Button fx:id="exitButton" onAction="#exitButtonHandler" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Выйти" styleClass="my-exit-button">
                <font>
                   <Font size="14.0" />
                </font>

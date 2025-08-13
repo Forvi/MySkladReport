@@ -257,7 +257,11 @@ public class SkladRequest {
     public String getNewTokenByLogin(String login, String password) {
         try {
             ValidateLoginData(login, password);
-            HttpResponse<byte[]> response = sendPostRequest("https://api.moysklad.ru/api/remap/1.2/security/token", login, password);
+            HttpResponse<byte[]> response = sendPostRequest(
+                "https://api.moysklad.ru/api/remap/1.2/security/token", 
+                login, 
+                password
+            );
             return unpackedGzip(response);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -326,5 +330,39 @@ public class SkladRequest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * <p>Проверяет токен на: 
+     * <ul>
+     *  <li>Пустое значение</li>
+     *  <li>Null</li>
+     *  <li>Валидность</li>
+     * </ul>
+     * </p>
+     * -------------------------------
+     * @param token
+     * @return boolean, false - токен не валиден, true - токен валиден
+     * @throws IOException ошибка ввода
+     * @throws InterruptedException поток прервался
+     */
+    public boolean validateToken(String token) throws IOException, InterruptedException {
+        if (Objects.isNull(token))
+            return false;
+
+        if (token.isEmpty() || token.isBlank())
+            return false;
+
+        this.TOKEN = token;
+        var request = sendGetRequest("https://api.moysklad.ru/api/remap/1.2/entity/assortment?limit=1");
+        var response = unpackedGzip(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode node = objectMapper.readTree(response);
+
+        if (node.has("errors")) {
+            return false;
+        }
+
+        return true;
     }
 }

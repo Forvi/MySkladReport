@@ -46,6 +46,9 @@ public class RetailStoreController implements Initializable {
     @FXML
     private Button selectButton;
 
+    @FXML
+    private Button exitButton;
+
     private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/retailstore";
 
     ObservableList<RetailStore> masterData;
@@ -222,6 +225,24 @@ public class RetailStoreController implements Initializable {
     
             newStage.show();
         }
+    }
+
+    @FXML
+    private void exitButtonHandler() throws IOException {
+        Stage currentStage = (Stage) exitButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
+        Parent root = fxmlLoader.load();
+        
+        Stage newStage = new Stage();
+        newStage.setTitle("MySklad Report App");
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+        newStage.setScene(scene);
+        newStage.setResizable(false);
+        newStage.centerOnScreen();
+        currentStage.close();
+        
+        newStage.show();
     }
 
     /**
