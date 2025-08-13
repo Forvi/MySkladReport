@@ -227,6 +227,11 @@ public class RetailStoreController implements Initializable {
         }
     }
 
+    /**
+     * Обрабатывает кнопку "Выйти".
+     * 
+     * @throws IOException 
+     */
     @FXML
     private void exitButtonHandler() throws IOException {
         Stage currentStage = (Stage) exitButton.getScene().getWindow();

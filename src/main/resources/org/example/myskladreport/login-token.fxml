@@ -48,7 +48,7 @@
                <font>
                   <Font size="16.0" />
                </font></Text>
-            <Button fx:id="enterButton" layoutX="705.0" layoutY="280.0" mnemonicParsing="false" onAction="#onEnterButtonClick" text="Войти" styleClass="my-primary-button">
+            <Button fx:id="enterButton" layoutX="705.0" layoutY="260.0" mnemonicParsing="false" onAction="#onEnterButtonClick" text="Войти" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
                </font></Button>
@@ -62,12 +62,11 @@
                   <Font size="24.0" />
                </font>
             </Text>
-            <Button fx:id="enterPassButton" onAction="#enterPassButtonHandler" layoutX="220.0" layoutY="280.0" mnemonicParsing="false" text="Войти по паролю" styleClass="my-primary-button">
+            <Button fx:id="enterPassButton" onAction="#enterPassButtonHandler" layoutX="220.0" layoutY="260.0" mnemonicParsing="false" text="Войти по паролю" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <CheckBox fx:id="rememberCheckBox" layoutX="696.0" layoutY="252.0" mnemonicParsing="false" text="Запомнить" styleClass="my-checkbox"/>
       </children>
     </AnchorPane>
   </children>
