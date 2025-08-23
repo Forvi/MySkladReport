@@ -5,13 +5,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
 import org.example.myskladreport.models.RetailStore;
 import org.example.myskladreport.utils.SkladRequest;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
@@ -63,10 +61,9 @@ public class RetailStoreController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         masterData = FXCollections.observableArrayList();
-        searchHandler();
         checkListView.setItems(filteredData);
         lookSelectedHandler();
-        infoHandler();
+        searchHandler();
     }
 
 
@@ -156,7 +153,8 @@ public class RetailStoreController implements Initializable {
      * Обработчик кнопки "?"
      * Показывает информацию
      */
-    private void infoHandler() {
+    @FXML
+    protected void questionButtonHandler() {
         Label text = new Label("- Выберите точки продаж, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
                                 "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
         VBox vbox = new VBox(text);
@@ -174,23 +172,16 @@ public class RetailStoreController implements Initializable {
      */
     private void searchHandler() {
         filteredData = new FilteredList<>(masterData, p -> true);
-        listSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-            // Сохраняем выбранные элементы
-            ObservableList<RetailStore> selectedItems = checkListView.getCheckModel().getCheckedItems();
-            
-            // Применяем фильтр
-            filteredData.setPredicate(store -> 
-                newValue == null || newValue.isEmpty() || 
-                store.getName().toLowerCase().contains(newValue.toLowerCase()));
-            
-            // Восстанавливаем выбранные элементы
-            checkListView.getCheckModel().clearChecks();
-            for (RetailStore item : selectedItems) {
-                if (filteredData.contains(item)) {
-                    checkListView.getCheckModel().check(item);
-                }
-            }
+        var checkModel = checkListView.getCheckModel();
+        System.out.println("_______________________");
+        System.out.println(checkModel.getCheckedItems());
+        System.out.println("_______________________");
+        listSearch.setOnAction(event -> {
+            String newVal = listSearch.getText();
+            filteredData.setPredicate(store -> store.getName().toLowerCase().contains(newVal.toLowerCase()));
         });
+
+        checkListView.setItems(filteredData);
     }
 
     /** 
@@ -222,7 +213,8 @@ public class RetailStoreController implements Initializable {
             newStage.setScene(scene);
             newStage.setResizable(false);
             currentStage.close();
-    
+            
+            productFolderController.setStage(newStage);
             newStage.show();
         }
     }

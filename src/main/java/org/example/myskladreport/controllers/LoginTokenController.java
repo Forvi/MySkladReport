@@ -47,7 +47,7 @@ public class LoginTokenController implements Initializable {
     }
 
     @FXML
-    void onEnterButtonClick(ActionEvent event) throws IOException, InterruptedException {
+    protected void onEnterButtonClick(ActionEvent event) throws IOException, InterruptedException {
         String token = tokenField.getText();
 
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
@@ -97,6 +97,20 @@ public class LoginTokenController implements Initializable {
         currentStage.close();
         
         newStage.show();
+    }
+
+    @FXML
+    protected void questionButtonHandler() {
+        Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад\n" + 
+                                "- Если Вы не хотите каждый раз вводить данные для входа, активируйте 'Запомнить'\n" +
+                                "- Не переживайте за данные, при функции 'Запомнить' - логин и пароль шифруются");
+        VBox vbox = new VBox(text);
+        vbox.setPadding(new Insets(15));
+        PopOver popOver = new PopOver(vbox);
+        questionButton.setOnAction(e -> {
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            popOver.show(questionButton);
+        });
     }
  
     private void showEmptyFieldHandler() {

@@ -43,7 +43,6 @@ public class LoginPasswordController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         skladRequest = new SkladRequest();
-        infoHandler();
     }
 
     @FXML
@@ -101,7 +100,8 @@ public class LoginPasswordController implements Initializable {
         newStage.show();
     }
 
-    private void infoHandler() {
+    @FXML
+    protected void questionButtonHandler() {
         Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад\n" + 
                                 "- Если Вы не хотите каждый раз вводить данные для входа, активируйте 'Запомнить'\n" +
                                 "- Не переживайте за данные, при функции 'Запомнить' - логин и пароль шифруются");

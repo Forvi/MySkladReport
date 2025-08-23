@@ -1,15 +1,24 @@
 package org.example.myskladreport.controllers;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
 import org.example.myskladreport.models.ProductFolder;
 import org.example.myskladreport.models.RetailStore;
+import org.example.myskladreport.utils.FolderChooser;
+import org.example.myskladreport.utils.ReportWriter;
 import org.example.myskladreport.utils.SkladRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +66,8 @@ public class ProductFolderController implements Initializable {
     private FilteredList<ProductFolder> filteredData;
 
     private SkladRequest skladRequest;
+
+    private Stage stage;
     
     // ======== INIT =============
     @Override
@@ -67,7 +78,6 @@ public class ProductFolderController implements Initializable {
 
         searchHandler();
         lookSelectedHandler();
-        infoHandler();
     }
 
     // ======== SETTERS =============
@@ -82,6 +92,10 @@ public class ProductFolderController implements Initializable {
         this.skladRequest = new SkladRequest();
         this.skladRequest.setToken(token);
         loadData();
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     // ======== HANDLERS =============
@@ -121,27 +135,16 @@ public class ProductFolderController implements Initializable {
     }
 
     @FXML
-    private void nextButtonHandler() {
+    protected void nextButtonHandler() {
         ObservableList<ProductFolder> productFolders = checkListView.getCheckModel().getCheckedItems();
-
+        
         try {
-            for (var retailStore : retailStores) {
-                System.out.println("Магазин: " + retailStore.getName());
-                
-                for (var productFolder : productFolders) {
-                    var revenue = skladRequest.getRevenue(
-                                retailStore.getStoreId(), 
-                                productFolder.getFolderId()
-                    );
-
-                    System.out.println("Группа товаров: " + productFolder.getName() + ", Выручка: " + revenue);
-                }
-
-                System.out.println("__________________\n");
-            }
+            String path = FolderChooser.choose(stage, "Выберите папку");
+            ReportWriter.write(this.retailStores, productFolders, skladRequest, path);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+        
     }
 
     private void lookSelectedHandler() {
@@ -171,7 +174,8 @@ public class ProductFolderController implements Initializable {
         });
     }
 
-    private void infoHandler() {
+    @FXML
+    protected void questionButtonHandler() {
         Label text = new Label("- Выберите группы товаров, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
                                 "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
         VBox vbox = new VBox(text);
