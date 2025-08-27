@@ -61,9 +61,9 @@ public class RetailStoreController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         masterData = FXCollections.observableArrayList();
-        checkListView.setItems(filteredData);
         lookSelectedHandler();
         searchHandler();
+        checkListView.setItems(filteredData);
     }
 
 
@@ -158,10 +158,6 @@ public class RetailStoreController implements Initializable {
      */
     private void searchHandler() {
         filteredData = new FilteredList<>(masterData, p -> true);
-        var checkModel = checkListView.getCheckModel();
-        System.out.println("_______________________");
-        System.out.println(checkModel.getCheckedItems());
-        System.out.println("_______________________");
         listSearch.setOnAction(event -> {
             String newVal = listSearch.getText();
             filteredData.setPredicate(store -> store.getName().toLowerCase().contains(newVal.toLowerCase()));
