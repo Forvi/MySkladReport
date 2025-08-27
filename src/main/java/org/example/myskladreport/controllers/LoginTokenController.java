@@ -101,9 +101,7 @@ public class LoginTokenController implements Initializable {
 
     @FXML
     protected void questionButtonHandler() {
-        Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад\n" + 
-                                "- Если Вы не хотите каждый раз вводить данные для входа, активируйте 'Запомнить'\n" +
-                                "- Не переживайте за данные, при функции 'Запомнить' - логин и пароль шифруются");
+        Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад");
         VBox vbox = new VBox(text);
         vbox.setPadding(new Insets(15));
         PopOver popOver = new PopOver(vbox);

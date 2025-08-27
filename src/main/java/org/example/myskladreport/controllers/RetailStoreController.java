@@ -47,6 +47,12 @@ public class RetailStoreController implements Initializable {
     @FXML
     private Button exitButton;
 
+    @FXML
+    private Button clearAllButton;
+
+    @FXML
+    private Button selectAllButton;
+
     private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/retailstore";
 
     ObservableList<RetailStore> masterData;
@@ -237,6 +243,24 @@ public class RetailStoreController implements Initializable {
         PopOver popOver = new PopOver(vbox);
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         popOver.show(nextButton);
+    }
+
+    @FXML
+    protected void clearAllButtonHandler() {
+        try {
+            checkListView.getCheckModel().clearChecks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    protected void selectAllButtonHandler() {
+        try {
+            checkListView.getCheckModel().checkAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

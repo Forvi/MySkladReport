@@ -54,6 +54,16 @@
                   <Font size="14.0" />
                </font>
             </Button>
+            <Button fx:id="clearAllButton" layoutX="380.0" layoutY="494.0" mnemonicParsing="false" onAction="#clearAllButtonHandler" text="Очистить все" styleClass="my-second-button">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="selectAllButton" layoutX="525.0" layoutY="494.0" mnemonicParsing="false" onAction="#selectAllButtonHandler" text="Выбрать все" styleClass="my-second-button">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
             <Button fx:id="questionButton" onAction="#questionButtonHandler" layoutX="985.0" layoutY="602.0" mnemonicParsing="false" text="?" styleClass="question-button"/>
             <TextField fx:id="listSearch" layoutX="222.0" layoutY="132.0" prefHeight="24.0" prefWidth="584.0" promptText="Поиск..." styleClass="primary-textfield">
                <font>
