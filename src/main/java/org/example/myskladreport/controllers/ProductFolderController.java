@@ -51,6 +51,12 @@ public class ProductFolderController implements Initializable {
     @FXML
     private Button backButton;
 
+    @FXML
+    private Button clearAllButton;
+
+    @FXML
+    private Button selectAllButton;
+
     private ObservableList<RetailStore> retailStores;
 
     private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder/";
@@ -206,6 +212,24 @@ public class ProductFolderController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Точки продаж");
+    }
+
+    @FXML
+    protected void clearAllButtonHandler() {
+        try {
+            checkListView.getCheckModel().clearChecks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    protected void selectAllButtonHandler() {
+        try {
+            checkListView.getCheckModel().checkAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

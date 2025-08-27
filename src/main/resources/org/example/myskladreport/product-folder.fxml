@@ -62,7 +62,18 @@
             <Button fx:id="selectButton" layoutX="222.0" layoutY="494.0" mnemonicParsing="false" text="Выбрано" styleClass="my-primary-button">
                <font>
                   <Font size="14.0" />
-               </font></Button>
+               </font>
+            </Button>
+            <Button fx:id="clearAllButton" layoutX="380.0" layoutY="494.0" mnemonicParsing="false" onAction="#clearAllButtonHandler" text="Очистить все" styleClass="my-second-button">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="selectAllButton" layoutX="525.0" layoutY="494.0" mnemonicParsing="false" onAction="#selectAllButtonHandler" text="Выбрать все" styleClass="my-second-button">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
             <CheckListView fx:id="checkListView" layoutX="222.0" layoutY="178.0" prefHeight="308.0" prefWidth="584.0" styleClass="my-checkbox"/>
             <Button fx:id="backButton" onAction="#backButtonHandler" layoutX="18.0" layoutY="8.0" mnemonicParsing="false" text="←" styleClass="back-button"/>
       </children>
