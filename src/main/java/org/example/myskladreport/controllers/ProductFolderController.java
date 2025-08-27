@@ -1,17 +1,10 @@
 package org.example.myskladreport.controllers;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
@@ -35,6 +28,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ProductFolderController implements Initializable {
@@ -112,21 +106,7 @@ public class ProductFolderController implements Initializable {
             masterData.addAll(productFolders);
             
             selectButton.setOnAction(e -> {
-                ObservableList<ProductFolder> selected = checkListView.getCheckModel().getCheckedItems();
-                StringBuilder sb = new StringBuilder();
-
-                for (var store : selected) {
-                    sb.append(store.getName()).append("\n");
-                }
-
-                Label content = new Label(sb.toString());
-                content.setWrapText(true);
-                VBox vbox = new VBox(content);
-                vbox.setPadding(new Insets(12));
-
-                PopOver popOver = new PopOver(vbox);
-                popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-                popOver.show(selectButton);
+                lookSelectedHandler();
             });
 
         } catch (IOException | InterruptedException e) {
@@ -141,6 +121,7 @@ public class ProductFolderController implements Initializable {
         try {
             String path = FolderChooser.choose(stage, "Выберите папку");
             ReportWriter.write(this.retailStores, productFolders, skladRequest, path);
+            successfulSaveModal(stage);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -195,6 +176,23 @@ public class ProductFolderController implements Initializable {
         });
 
         checkListView.setItems(filteredData);
+    }
+
+    public void successfulSaveModal(Stage stage) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("successfulSaveModal.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage modalStage = new Stage();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+            modalStage.initOwner(stage);
+            modalStage.initModality(Modality.WINDOW_MODAL);
+            modalStage.setScene(scene);
+            modalStage.setResizable(false);
+            modalStage.showAndWait(); 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

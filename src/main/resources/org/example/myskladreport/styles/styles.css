@@ -27,6 +27,20 @@
     -fx-background-color: #d90429;
 }
 
+.my-close-button {
+    -fx-background-color: #ef233c;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 4 12 4 12;
+    -fx-border-width: 0;
+}
+
+.my-close-button:hover {
+    -fx-background-color: #d90429;
+}
+
 .primary-textfield {
     -fx-background-color: #f7fafc;
     -fx-border-color: #1263ee;

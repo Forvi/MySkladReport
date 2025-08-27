@@ -98,21 +98,7 @@ public class RetailStoreController implements Initializable {
             masterData.addAll(retailStores);
             
             selectButton.setOnAction(e -> {
-                ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
-                StringBuilder sb = new StringBuilder();
-
-                for (var store : selected) {
-                    sb.append(store.getName()).append("\n");
-                }
-
-                Label content = new Label(sb.toString());
-                content.setWrapText(true);
-                VBox vbox = new VBox(content);
-                vbox.setPadding(new Insets(12));
-
-                PopOver popOver = new PopOver(vbox);
-                popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-                popOver.show(selectButton);
+                lookSelectedHandler();
             });
 
         } catch (IOException | InterruptedException e) {
