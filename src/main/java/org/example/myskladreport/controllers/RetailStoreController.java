@@ -61,6 +61,8 @@ public class RetailStoreController implements Initializable {
 
     private List<RetailStore> retailStores;
 
+    private ObservableList<RetailStore> selected;
+
     private SkladRequest skladRequest;
 
     // ======== INIT =============
@@ -70,6 +72,7 @@ public class RetailStoreController implements Initializable {
         lookSelectedHandler();
         searchHandler();
         checkListView.setItems(filteredData);
+        
     }
 
 
@@ -167,9 +170,10 @@ public class RetailStoreController implements Initializable {
         listSearch.setOnAction(event -> {
             String newVal = listSearch.getText();
             filteredData.setPredicate(store -> store.getName().toLowerCase().contains(newVal.toLowerCase()));
+            selected = checkListView.getCheckModel().getCheckedItems();
+            System.out.println(selected);
         });
 
-        checkListView.setItems(filteredData);
     }
 
     /** 

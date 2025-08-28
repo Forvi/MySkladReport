@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
+   
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
@@ -16,7 +17,6 @@ public class HelloApplication extends Application {
         stage.setResizable(false);
         stage.setTitle("MySklad Report App");
         stage.setScene(scene);
-        stage.centerOnScreen();
         stage.show();
     }
 
