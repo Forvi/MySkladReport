@@ -53,6 +53,7 @@ public class LoginTokenController implements Initializable {
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
         currentStage.centerOnScreen();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
+
         Parent root = fxmlLoader.load();
 
         if (token.isEmpty()) {

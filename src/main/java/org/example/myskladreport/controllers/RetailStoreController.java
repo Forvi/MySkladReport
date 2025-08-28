@@ -1,20 +1,8 @@
 package org.example.myskladreport.controllers;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import org.controlsfx.control.CheckListView;
-import org.controlsfx.control.PopOver;
-import org.example.myskladreport.HelloApplication;
-import org.example.myskladreport.models.RetailStore;
-import org.example.myskladreport.utils.SkladRequest;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -26,17 +14,35 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import org.controlsfx.control.ListSelectionView;
+import org.controlsfx.control.PopOver;
+import org.example.myskladreport.HelloApplication;
+import org.example.myskladreport.models.RetailStore;
+import org.example.myskladreport.utils.SkladRequest;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RetailStoreController implements Initializable {
 
     @FXML
-    private TextField listSearch;
+    private Button exitButton;
 
     @FXML
-    private CheckListView<RetailStore> checkListView;
+    private TextField listSearchAvailable;
+
+    @FXML
+    private TextField listSearchSelected;
 
     @FXML
     private Button nextButton;
+
+    @FXML
+    private ListSelectionView<RetailStore> listSelectionView;
 
     @FXML
     private Button questionButton;
@@ -44,43 +50,48 @@ public class RetailStoreController implements Initializable {
     @FXML
     private Button selectButton;
 
-    @FXML
-    private Button exitButton;
+    List<RetailStore> retailStores;
 
-    @FXML
-    private Button clearAllButton;
+    private final ObservableList<RetailStore> availableRetailStores = FXCollections.observableArrayList();
 
-    @FXML
-    private Button selectAllButton;
-
-    private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/retailstore";
-
-    ObservableList<RetailStore> masterData;
-
-    private FilteredList<RetailStore> filteredData;
-
-    private List<RetailStore> retailStores;
-
-    private ObservableList<RetailStore> selected;
+    private final ObservableList<RetailStore> selectedRetailStores = FXCollections.observableArrayList();
 
     private SkladRequest skladRequest;
 
+    private final String URL = "https://api.moysklad.ru/api/remap/1.2/entity/retailstore";
+
     // ======== INIT =============
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        masterData = FXCollections.observableArrayList();
-        lookSelectedHandler();
-        searchHandler();
-        checkListView.setItems(filteredData);
-        
-    }
+        listSelectionView.setSourceHeader(new Label(""));
+        listSelectionView.setTargetHeader(new Label(""));
 
+        listSelectionView.setSourceItems(availableRetailStores);
+        listSelectionView.setTargetItems(selectedRetailStores);
+
+        setupSearchAvailable();
+        setupSearchSelected();
+    }
+    
+    private void loadData() {
+        try {
+            var responseGzip = this.skladRequest.sendGetRequest(this.URL);
+            var response = this.skladRequest.unpackedGzip(responseGzip);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode node = objectMapper.readTree(response);
+
+            retailStores = this.skladRequest.getRetailStoresFromSklad(node);
+
+            availableRetailStores.setAll(retailStores);
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     // ======== SETTERS =============
-    public void setRetailStores(ObservableList<RetailStore> retailStores) {
-        if (retailStores.isEmpty() || Objects.isNull(retailStores))
-            throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
-    }
 
     public void setToken(String token) {
         this.skladRequest = new SkladRequest();
@@ -90,134 +101,15 @@ public class RetailStoreController implements Initializable {
 
     // ======== HANDLERS =============
 
-    /** 
-     * Загрузка всех точек продаж
-     * Обработка кнопки "Выбрано"
-     */
-    private void loadData() {
-        try {
-            var responseGzip = this.skladRequest.sendGetRequest(URL);
-            var response = this.skladRequest.unpackedGzip(responseGzip);
-            
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode node = objectMapper.readTree(response);
-            
-            List<RetailStore> retailStores = this.skladRequest.getRetailStoresFromSklad(node);
-            masterData.clear();
-            masterData.addAll(retailStores);
-            
-            selectButton.setOnAction(e -> {
-                lookSelectedHandler();
-            });
-
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
-     * Показывает выбранные элементы либо его отсутствие 
-     */
-    private void lookSelectedHandler() {
-        selectButton.setOnAction(e -> {
-            ObservableList<RetailStore> selected = checkListView.getCheckModel().getCheckedItems();
-            StringBuilder sb = new StringBuilder();
-
-            for (var store : selected) {
-                sb.append(store.getName()).append("\n");
-            }
-
-            Label content = new Label();
-            if (sb.isEmpty()) {
-                content.setText("Вы ничего не выбрали!");
-            } else {
-                content.setText(sb.toString());
-            }
-
-            content.setWrapText(true);
-            VBox vbox = new VBox(content);
-            vbox.setPadding(new Insets(12));
-
-            PopOver popOver = new PopOver(vbox);
-            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-            popOver.show(selectButton);
-        });
-    }
-
-    /**
-     * Обработчик кнопки "?"
-     * Показывает информацию
-     */
-    @FXML
-    protected void questionButtonHandler() {
-        Label text = new Label("- Выберите точки продаж, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
-                                "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
-        VBox vbox = new VBox(text);
-        vbox.setPadding(new Insets(15));
-        PopOver popOver = new PopOver(vbox);
-        questionButton.setOnAction(e -> {
-            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-            popOver.show(questionButton);
-        });
-    }
-    
-    /**
-     * Обработчик текстового поля
-     * Поиск элементов по части названию
-     */
-    private void searchHandler() {
-        filteredData = new FilteredList<>(masterData, p -> true);
-        listSearch.setOnAction(event -> {
-            String newVal = listSearch.getText();
-            filteredData.setPredicate(store -> store.getName().toLowerCase().contains(newVal.toLowerCase()));
-            selected = checkListView.getCheckModel().getCheckedItems();
-            System.out.println(selected);
-        });
-
-    }
-
-    /** 
-     * Обработка кнопки "Далее"
-     * Загружается следующее окно "Группы товаров" и передается вся информация
+     * <p>Обработчик кнопки "Выйти".</p>
+     * <p>Загружает окно авторизации.</p>
      * 
+     * @param event
      * @throws IOException
      */
     @FXML
-    private void nextButtonHandler() throws IOException {
-        if (checkListView.getCheckModel().getCheckedItems().isEmpty()) {
-            showEmptySelectedHandler();
-        } else {
-            ObservableList<RetailStore> retailStores = checkListView.getCheckModel().getCheckedItems();
-
-            Stage currentStage = (Stage) nextButton.getScene().getWindow();
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
-            Parent root = fxmlLoader.load();
-            
-            String token = skladRequest.getToken();
-            ProductFolderController productFolderController = fxmlLoader.getController();
-            productFolderController.setRetailStores(retailStores);
-            productFolderController.setToken(token);
-
-            Stage newStage = new Stage();
-            newStage.setTitle("Группы товаров");
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-            newStage.setScene(scene);
-            newStage.setResizable(false);
-            currentStage.close();
-            
-            productFolderController.setStage(newStage);
-            newStage.show();
-        }
-    }
-
-    /**
-     * Обрабатывает кнопку "Выйти".
-     * 
-     * @throws IOException 
-     */
-    @FXML
-    private void exitButtonHandler() throws IOException {
+    protected void exitButtonHandler(ActionEvent event) throws IOException {
         Stage currentStage = (Stage) exitButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
         Parent root = fxmlLoader.load();
@@ -235,7 +127,108 @@ public class RetailStoreController implements Initializable {
     }
 
     /**
-     * Показывает отсутсвие выбранных точек продаж
+     * <p>Обработчик кнопки "?"</p>
+     * 
+     * @param event
+     */
+    @FXML
+    protected void questionButtonHandler(ActionEvent event) {
+        Label text = new Label("- Выберите точки продаж, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
+                                "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
+        VBox vbox = new VBox(text);
+        vbox.setPadding(new Insets(15));
+        PopOver popOver = new PopOver(vbox);
+        questionButton.setOnAction(e -> {
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            popOver.show(questionButton);
+        });
+    }
+
+    /** 
+     * <p>Обработка кнопки "Далее".</p>
+     * <p>Загружается следующее окно "Группы товаров" и передается вся информация.</p>
+     * 
+     * @throws IOException
+     */
+    @FXML
+    private void nextButtonHandler() throws IOException {
+        if (selectedRetailStores.isEmpty()) {
+            showEmptySelectedHandler();
+        } else {
+            Stage currentStage = (Stage) nextButton.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
+            Parent root = fxmlLoader.load();
+            
+            String token = skladRequest.getToken();
+            ProductFolderController productFolderController = fxmlLoader.getController();
+            productFolderController.setRetailStores(selectedRetailStores);
+            productFolderController.setToken(token);
+
+            Stage newStage = new Stage();
+            newStage.setTitle("Группы товаров");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+            newStage.setScene(scene);
+            newStage.setResizable(false);
+            currentStage.close();
+            
+            productFolderController.setStage(newStage);
+            newStage.show();
+        }
+    }
+
+    /**
+     * <p>Производит поиск в списке доступных элементов.</p>
+     */
+    private void setupSearchAvailable() {
+        listSearchAvailable.textProperty().addListener((obs, oldVal, newVal) -> {
+            filterAvailableList(newVal);
+        });
+    }
+
+    /**
+     * <p>Производит поиск в списке выбранных элементов.</p>
+     */
+    private void setupSearchSelected() {
+        listSearchSelected.textProperty().addListener((obs, oldVal, newVal) -> {
+            filterSelectedList(newVal);
+        });
+    }
+
+    /**
+     * <p>Фильтрует список доступных элементов по подстроке.</p>
+     * 
+     * @param filter подстрока
+     */
+    private void filterAvailableList(String filter) {
+        availableRetailStores.clear();
+        String lowerFilter = filter == null ? "" : filter.toLowerCase();
+        List<RetailStore> filtered = retailStores.stream()
+            .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
+            .filter(store -> !selectedRetailStores.contains(store))
+            .collect(Collectors.toList());
+
+        availableRetailStores.addAll(filtered);
+    }
+
+    /**
+     * <p>Фильтрует список выбранных элементов по подстроке.</p>
+     * 
+     * @param filter подстрока
+     */
+    private void filterSelectedList(String filter) {
+        selectedRetailStores.clear();
+        String lowerFilter = filter == null ? "" : filter.toLowerCase();
+        List<RetailStore> filtered = retailStores.stream()
+            .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
+            .filter(store -> !availableRetailStores.contains(store))
+            .collect(Collectors.toList());
+
+        selectedRetailStores.addAll(filtered);
+    }
+
+    /**
+     * <p>Показывает отсутсвие выбранных точек продаж.</p>
      */
     private void showEmptySelectedHandler() {
         Label content = new Label("Вы ничего не выбрали!");
@@ -248,24 +241,4 @@ public class RetailStoreController implements Initializable {
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         popOver.show(nextButton);
     }
-
-    @FXML
-    protected void clearAllButtonHandler() {
-        try {
-            checkListView.getCheckModel().clearChecks();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    protected void selectAllButtonHandler() {
-        try {
-            checkListView.getCheckModel().checkAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
-
