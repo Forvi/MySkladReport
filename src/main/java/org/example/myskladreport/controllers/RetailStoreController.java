@@ -83,9 +83,7 @@ public class RetailStoreController implements Initializable {
             JsonNode node = objectMapper.readTree(response);
 
             retailStores = this.skladRequest.getRetailStoresFromSklad(node);
-
             availableRetailStores.setAll(retailStores);
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -97,6 +95,16 @@ public class RetailStoreController implements Initializable {
         this.skladRequest = new SkladRequest();
         this.skladRequest.setToken(token);
         loadData();
+    }
+
+    public void setListSearchAvailable(ObservableList<RetailStore> availableRetailStores) {
+        this.availableRetailStores.clear();
+        this.availableRetailStores.addAll(availableRetailStores);
+    }
+
+    public void setListSearchSelected(ObservableList<RetailStore> selectedRetailStores) {
+        this.selectedRetailStores.clear();
+        this.selectedRetailStores.addAll(selectedRetailStores);
     }
 
     // ======== HANDLERS =============
@@ -161,7 +169,8 @@ public class RetailStoreController implements Initializable {
             
             String token = skladRequest.getToken();
             ProductFolderController productFolderController = fxmlLoader.getController();
-            productFolderController.setRetailStores(selectedRetailStores);
+            productFolderController.setSelectedRetailStores(selectedRetailStores);
+            productFolderController.setAvailableRetailStores(availableRetailStores);
             productFolderController.setToken(token);
 
             Stage newStage = new Stage();
