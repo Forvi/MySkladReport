@@ -9,6 +9,7 @@ module org.example.myskladreport {
     requires com.fasterxml.jackson.core;
     requires javafx.graphics;
     requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
     
 
     opens org.example.myskladreport.controllers to javafx.fxml;

@@ -17,11 +17,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import org.controlsfx.control.ListSelectionView;
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
+import org.example.myskladreport.models.ProductFolder;
 import org.example.myskladreport.models.RetailStore;
 import org.example.myskladreport.utils.SkladRequest;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -92,17 +94,26 @@ public class RetailStoreController implements Initializable {
     // ======== SETTERS =============
 
     public void setToken(String token) {
+        if (token.isEmpty() || Objects.isNull(token))
+            throw new IllegalArgumentException("Token cannot be empty or null.");
+
         this.skladRequest = new SkladRequest();
         this.skladRequest.setToken(token);
         loadData();
     }
 
     public void setListSearchAvailable(ObservableList<RetailStore> availableRetailStores) {
+        if (availableRetailStores.isEmpty() || Objects.isNull(availableRetailStores))
+            throw new IllegalArgumentException("Available Retail Stores cannot be empty or null.");
+
         this.availableRetailStores.clear();
         this.availableRetailStores.addAll(availableRetailStores);
     }
 
     public void setListSearchSelected(ObservableList<RetailStore> selectedRetailStores) {
+        if (selectedRetailStores.isEmpty() || Objects.isNull(selectedRetailStores))
+            throw new IllegalArgumentException("Selected Retail Stores cannot be empty or null.");
+        
         this.selectedRetailStores.clear();
         this.selectedRetailStores.addAll(selectedRetailStores);
     }

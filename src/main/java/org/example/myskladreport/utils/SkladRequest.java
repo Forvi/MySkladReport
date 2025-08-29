@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 import org.example.myskladreport.models.ProductFolder;
 import org.example.myskladreport.models.RetailStore;
@@ -61,20 +63,16 @@ public class SkladRequest {
     public List<ProductFolder> getProductFoldersFromSklad(JsonNode jsonNode) {
         try {
             ArrayNode rows = (ArrayNode) jsonNode.get("rows");
-            List<ProductFolder> productFolders = new ArrayList<>();
+            return StreamSupport.stream(rows.spliterator(), true)
+                .map(e -> {
+                    String name = e.get("name").asText();
+                    UUID id = getIdFromMeta(e);
 
-            for (JsonNode e : rows) {
-                String name = e.get("name").asText();
-                UUID id = getIdFromMeta(e);
-
-                ProductFolder productFolder = new ProductFolder();
-                productFolder.setFolderId(id);
-                productFolder.setName(name);
-
-                productFolders.add(productFolder);
-            }
-
-            return productFolders;
+                    ProductFolder productFolder = new ProductFolder();
+                    productFolder.setFolderId(id);
+                    productFolder.setName(name);
+                    return productFolder;
+                }).collect(Collectors.toList());
 
         } catch (Exception e) {
             throw new RuntimeException("Error while processing JSON", e);
@@ -92,23 +90,18 @@ public class SkladRequest {
     public List<RetailStore> getRetailStoresFromSklad(JsonNode jsonNode) {
         try {
             ArrayNode rows = (ArrayNode) jsonNode.get("rows");
-            List<RetailStore> retailStores = new ArrayList<>();
-
-            for (var e : rows) {
-                String name = e.get("name").asText();
-                UUID id = transformStringToUuid(e.get("id").asText());
-                JsonNode store = e.get("store");
-                UUID storeId = getIdFromMeta(store);
-
-                RetailStore retailStore = new RetailStore();
-                retailStore.setItemID(id);
-                retailStore.setName(name);
-                retailStore.setStoreId(storeId);
-
-                retailStores.add(retailStore);
-            }
-
-            return retailStores;
+            return StreamSupport.stream(rows.spliterator(), true)
+                .map(e -> {
+                    String name = e.get("name").asText();
+                    UUID id = transformStringToUuid(e.get("id").asText());
+                    UUID storeId = getIdFromMeta(e.get("store"));
+                    RetailStore retailStores = new RetailStore();
+                    retailStores.setItemID(id);
+                    retailStores.setName(name);
+                    retailStores.setStoreId(storeId);
+                    return retailStores;
+                })
+                .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Internal error while processing JSON", e);
         }
@@ -318,15 +311,11 @@ public class SkladRequest {
      * @return BigDecimal
      */
     private BigDecimal calculateRevenue(ArrayNode rows) {
-        BigDecimal revenue = BigDecimal.ZERO;
-
         try {
-            for (var e : rows) {
-                BigDecimal sellPrice = BigDecimal.valueOf(e.get("sellPrice").asDouble());
-                revenue = revenue.add(sellPrice);
-            }
-
-            return revenue.divide(BigDecimal.valueOf(100));
+            return StreamSupport.stream(rows.spliterator(), true)
+                .map(e -> BigDecimal.valueOf(e.get("sellPrice").asDouble()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(100));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

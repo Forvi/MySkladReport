@@ -138,3 +138,50 @@
     -fx-cursor: hand;
     -fx-font-weight: normal;
 }
+
+.list-selection-view .button {
+    -fx-background-color: #b5b5b5; 
+    -fx-text-fill: white !important;
+    -fx-font-weight: bold;
+}
+
+.list-selection-view .button:hover {
+    -fx-background-color: #a8a8a8;
+}
+
+.list-selection-view .list-view {
+    -fx-border-color: #1263ee;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.list-selection-view .list-view .list-cell {
+    -fx-background-radius: 10px;
+    -fx-fill: #595959; 
+}
+
+.list-selection-view .scroll-bar {
+    -fx-background-color: transparent; 
+    -fx-pref-width: 10px;  
+    -fx-padding: 2px;
+}
+
+.list-selection-view .scroll-bar .thumb {
+    -fx-background-color: #5d5d5d;
+    -fx-background-insets: 2;
+    -fx-background-radius: 6px;
+}
+
+.list-selection-view .scroll-bar .track {
+    -fx-background-color: #c0c0c0bb;
+    -fx-background-radius: 6px;
+}
+
+.list-selection-view .scroll-bar:horizontal {
+    -fx-pref-height: 8px; 
+}
+
+.list-selection-view .scroll-bar:vertical {
+    -fx-pref-width: 16px; 
+}

@@ -62,9 +62,9 @@ public class ProductFolderController implements Initializable {
 
     private Stage stage;
 
-    private final ObservableList<ProductFolder> availableProductFolders = FXCollections.observableArrayList();
+    private ObservableList<ProductFolder> availableProductFolders = FXCollections.observableArrayList();
 
-    private final ObservableList<ProductFolder> selectedProductFolders = FXCollections.observableArrayList();
+    private ObservableList<ProductFolder> selectedProductFolders = FXCollections.observableArrayList();
 
     private ObservableList<RetailStore> retailStoresSelected;
 
@@ -117,6 +117,18 @@ public class ProductFolderController implements Initializable {
             throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
 
         this.retailStoresAll = retailStoresAvailable;
+    }
+
+    public void setProductFolders(ObservableList<ProductFolder> availableProductFolders, 
+                                  ObservableList<ProductFolder> selectedProductFolders) {
+        if (availableProductFolders.isEmpty() || Objects.isNull(availableProductFolders))
+            throw new IllegalArgumentException("Available Product Folders cannot be empty or null.");
+        
+        if (selectedProductFolders.isEmpty() || Objects.isNull(selectedProductFolders))
+            throw new IllegalArgumentException("Selected Product Folders cannot be empty or null.");
+
+        this.availableProductFolders = availableProductFolders;
+        this.selectedProductFolders = selectedProductFolders;
     }
 
     public void setToken(String token) {
@@ -177,28 +189,38 @@ public class ProductFolderController implements Initializable {
     @FXML
     protected void nextButtonHandler() {
         try {
+            if (selectedProductFolders.isEmpty()) {
+                showEmptySelectedHandler();
+                return;
+            }
+
             String path = FolderChooser.choose(stage, "Выберите папку");
             ReportWriter.write(this.retailStoresSelected, selectedProductFolders, skladRequest, path);
             successfulSaveModal(stage);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        
     }
 
     @FXML
     private void backButtonHandler() throws IOException {
-        Stage stage = (Stage) backButton.getScene().getWindow();
-
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
         Parent root = fxmlLoader.load();
         RetailStoreController retailStoreController = fxmlLoader.getController();
         retailStoreController.setListSearchSelected(retailStoresSelected);
         retailStoreController.setListSearchAvailable(retailStoresAll);
+        retailStoreController.setToken(this.skladRequest.getToken());
+        
+        Stage newStage = new Stage();
+        newStage.setTitle("MySklad Report App");
         Scene scene = new Scene(root);
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-        stage.setScene(scene);
-        stage.setTitle("Точки продаж");
+        newStage.setScene(scene);
+        newStage.setResizable(false);
+        newStage.centerOnScreen();
+        stage.close();
+        
+        newStage.show();
     }
 
     /**
@@ -266,6 +288,11 @@ public class ProductFolderController implements Initializable {
         popOver.show(nextButton);
     }
 
+    /**
+     * <p>Модальное окно, подтверждающее сохранение.</p>
+     * 
+     * @param stage
+     */
     public void successfulSaveModal(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("successfulSaveModal.fxml"));

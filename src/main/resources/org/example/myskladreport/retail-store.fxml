@@ -56,7 +56,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <ListSelectionView fx:id="listSelectionView" layoutX="112.0" layoutY="154.0" prefHeight="372.0" prefWidth="848.0" stylesheets="@styles/styles.css">
+            <ListSelectionView fx:id="listSelectionView" layoutX="112.0" layoutY="154.0" prefHeight="372.0" prefWidth="848.0" stylesheets="@styles/styles.css" >
                <cursor>
                   <Cursor fx:constant="DEFAULT" />
                </cursor>
