@@ -46,12 +46,16 @@ public class LoginTokenController implements Initializable {
         skladRequest = new SkladRequest();
     }
 
+    /**
+     * <p>Обработчик кнопки "Войти"</p>
+     * 
+     * @param event
+     */
     @FXML
     protected void onEnterButtonClick(ActionEvent event) throws IOException, InterruptedException {
         String token = tokenField.getText();
 
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
-        currentStage.centerOnScreen();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
 
         Parent root = fxmlLoader.load();
@@ -75,12 +79,18 @@ public class LoginTokenController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        newStage.centerOnScreen();
+        newStage.setX(currentStage.getX()); 
+        newStage.setY(currentStage.getY());
         currentStage.close();
         
         newStage.show();
     }
 
+    /**
+     * <p>Обработчик кнопки "Войти по паролю".</p>
+     * 
+     * @param event
+     */
     @FXML
     protected void enterPassButtonHandler() throws IOException {
 
@@ -94,12 +104,16 @@ public class LoginTokenController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        newStage.centerOnScreen();
+        newStage.setX(currentStage.getX()); 
+        newStage.setY(currentStage.getY());
         currentStage.close();
         
         newStage.show();
     }
 
+    /**
+     * <p>Обработчик кнопки "?".</p>
+     */
     @FXML
     protected void questionButtonHandler() {
         Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад");
@@ -112,6 +126,9 @@ public class LoginTokenController implements Initializable {
         });
     }
  
+    /**
+     * <p>Показывает предупреждающий POPUP о незаполненных текстовых полях.</p>
+     */
     private void showEmptyFieldHandler() {
         Label content = new Label("Заполните текстовые поля!");
 
@@ -124,6 +141,9 @@ public class LoginTokenController implements Initializable {
         popOver.show(enterButton);
     }
 
+    /**
+     * <p>Показывает предупреждающий POPUP о невалидном токене.</p>
+     */
     private void showNotValidTokenHandler() {
         Label content = new Label("Данного токена не существует!");
 

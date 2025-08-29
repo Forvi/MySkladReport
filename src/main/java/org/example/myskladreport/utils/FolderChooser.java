@@ -8,6 +8,13 @@ import javafx.stage.Stage;
 
 public class FolderChooser {
 
+    /**
+     * Открывает окно для выбора директории.
+     * 
+     * @param stage активное окно JavaFX
+     * @param title название окна
+     * @return String, путь директории
+     */
     public static String choose(Stage stage, String title) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         
@@ -22,10 +29,6 @@ public class FolderChooser {
         } else {
             return null;
         }
-    }
-
-    public void writeReport() {
-        
     }
 
 }

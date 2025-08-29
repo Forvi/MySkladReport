@@ -45,6 +45,11 @@ public class LoginPasswordController implements Initializable {
         skladRequest = new SkladRequest();
     }
 
+    /**
+     * <p>Обработчик кнопки "Войти"</p>
+     * 
+     * @param event
+     */
     @FXML
     protected void onEnterButtonClick() throws IOException {
         String login = loginField.getText();
@@ -63,7 +68,6 @@ public class LoginPasswordController implements Initializable {
         }
 
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
-        currentStage.centerOnScreen();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
         Parent root = fxmlLoader.load();
         
@@ -76,12 +80,18 @@ public class LoginPasswordController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        newStage.centerOnScreen();
+        newStage.setX(currentStage.getX()); 
+        newStage.setY(currentStage.getY());
         currentStage.close();
         
         newStage.show();
     }
 
+    /**
+     * <p>Обработчик кнопки "Войти по токену".</p>
+     * 
+     * @param event
+     */
     @FXML
     protected void onEnterTokenButton() throws IOException {
         Stage currentStage = (Stage) enterButton.getScene().getWindow();
@@ -94,12 +104,16 @@ public class LoginPasswordController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        newStage.centerOnScreen();
+        newStage.setX(currentStage.getX()); 
+        newStage.setY(currentStage.getY());
         currentStage.close();
         
         newStage.show();
     }
 
+    /**
+     * <p>Обработчик кнопки "?".</p>
+     */
     @FXML
     protected void questionButtonHandler() {
         Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад");
@@ -112,6 +126,9 @@ public class LoginPasswordController implements Initializable {
         });
     }
 
+    /**
+     * <p>Показывает предупреждающий POPUP о незаполненных текстовых полях.</p>
+     */
     private void showEmptyFieldHandler() {
         Label content = new Label("Заполните текстовые поля!");
 
@@ -124,6 +141,9 @@ public class LoginPasswordController implements Initializable {
         popOver.show(enterButton);
     }
 
+    /**
+     * <p>Показывает предупреждающий POPUP о невалидных данных.</p>
+     */
     private void showErrorFieldHandler() {
         Label content = new Label("Ошибка аутентификации: Неправильный пароль или имя пользователя!");
 
@@ -136,6 +156,9 @@ public class LoginPasswordController implements Initializable {
         popOver.show(enterButton);
     }
 
+    /**
+     * <p>Генерирует токен.</p>
+     */
     private String generateToken(String login, String password) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

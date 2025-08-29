@@ -162,7 +162,8 @@ public class ProductFolderController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        newStage.centerOnScreen();
+        newStage.setX(currentStage.getX()); 
+        newStage.setY(currentStage.getY());
         currentStage.close();
         
         newStage.show();
@@ -186,6 +187,11 @@ public class ProductFolderController implements Initializable {
         });
     }
 
+    /**
+     * <p>Обработчик кнопки "Далее"</p>
+     * 
+     * @param event
+     */
     @FXML
     protected void nextButtonHandler() {
         try {
@@ -202,6 +208,11 @@ public class ProductFolderController implements Initializable {
         }
     }
 
+    /**
+     * <p>Обработчик кнопки "<-" назад.</p>
+     * 
+     * @param event
+     */
     @FXML
     private void backButtonHandler() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
@@ -217,7 +228,8 @@ public class ProductFolderController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        newStage.centerOnScreen();
+        newStage.setX(stage.getX()); 
+        newStage.setY(stage.getY());
         stage.close();
         
         newStage.show();

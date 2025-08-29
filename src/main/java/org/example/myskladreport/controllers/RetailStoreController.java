@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import org.controlsfx.control.ListSelectionView;
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
-import org.example.myskladreport.models.ProductFolder;
 import org.example.myskladreport.models.RetailStore;
 import org.example.myskladreport.utils.SkladRequest;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -139,7 +138,8 @@ public class RetailStoreController implements Initializable {
         scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
         newStage.setScene(scene);
         newStage.setResizable(false);
-        newStage.centerOnScreen();
+        newStage.setX(currentStage.getX());
+        newStage.setY(currentStage.getY());
         currentStage.close();
         
         newStage.show();
@@ -193,6 +193,8 @@ public class RetailStoreController implements Initializable {
             currentStage.close();
             
             productFolderController.setStage(newStage);
+            newStage.setX(currentStage.getX()); 
+            newStage.setY(currentStage.getY());
             newStage.show();
         }
     }

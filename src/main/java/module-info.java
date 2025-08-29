@@ -10,6 +10,7 @@ module org.example.myskladreport {
     requires javafx.graphics;
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
+    requires org.slf4j;
     
 
     opens org.example.myskladreport.controllers to javafx.fxml;
