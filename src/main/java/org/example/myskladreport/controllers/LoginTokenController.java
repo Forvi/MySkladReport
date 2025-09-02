@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
+import org.example.myskladreport.utils.ErrorLogger;
 import org.example.myskladreport.utils.SkladRequest;
 
 import javafx.event.ActionEvent;
@@ -53,37 +54,41 @@ public class LoginTokenController implements Initializable {
      */
     @FXML
     protected void onEnterButtonClick(ActionEvent event) throws IOException, InterruptedException {
-        String token = tokenField.getText();
-
-        Stage currentStage = (Stage) enterButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
-
-        Parent root = fxmlLoader.load();
-
-        if (token.isEmpty()) {
-            showEmptyFieldHandler();
-            return;
+        try {
+            String token = tokenField.getText();
+    
+            Stage currentStage = (Stage) enterButton.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
+    
+            Parent root = fxmlLoader.load();
+    
+            if (token.isEmpty()) {
+                showEmptyFieldHandler();
+                return;
+            }
+            
+            RetailStoreController retailStoreController = fxmlLoader.getController();
+            if (skladRequest.validateToken(token)) {
+                retailStoreController.setToken(token);
+            } else {
+                showNotValidTokenHandler();
+                return;
+            }
+    
+            Stage newStage = new Stage();
+            newStage.setTitle("Точки продаж");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+            newStage.setScene(scene);
+            newStage.setResizable(false);
+            newStage.setX(currentStage.getX()); 
+            newStage.setY(currentStage.getY());
+            currentStage.close();
+            
+            newStage.show();
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
         }
-        
-        RetailStoreController retailStoreController = fxmlLoader.getController();
-        if (skladRequest.validateToken(token)) {
-            retailStoreController.setToken(token);
-        } else {
-            showNotValidTokenHandler();
-            return;
-        }
-
-        Stage newStage = new Stage();
-        newStage.setTitle("Точки продаж");
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-        newStage.setScene(scene);
-        newStage.setResizable(false);
-        newStage.setX(currentStage.getX()); 
-        newStage.setY(currentStage.getY());
-        currentStage.close();
-        
-        newStage.show();
     }
 
     /**
@@ -93,22 +98,25 @@ public class LoginTokenController implements Initializable {
      */
     @FXML
     protected void enterPassButtonHandler() throws IOException {
-
-        Stage currentStage = (Stage) enterButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
-        Parent root = fxmlLoader.load();
-        
-        Stage newStage = new Stage();
-        newStage.setTitle("MySklad Report App");
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-        newStage.setScene(scene);
-        newStage.setResizable(false);
-        newStage.setX(currentStage.getX()); 
-        newStage.setY(currentStage.getY());
-        currentStage.close();
-        
-        newStage.show();
+        try {
+            Stage currentStage = (Stage) enterButton.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
+            Parent root = fxmlLoader.load();
+            
+            Stage newStage = new Stage();
+            newStage.setTitle("MySklad Report App");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+            newStage.setScene(scene);
+            newStage.setResizable(false);
+            newStage.setX(currentStage.getX()); 
+            newStage.setY(currentStage.getY());
+            currentStage.close();
+            
+            newStage.show();
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
+        }
     }
 
     /**
@@ -116,7 +124,7 @@ public class LoginTokenController implements Initializable {
      */
     @FXML
     protected void questionButtonHandler() {
-        Label text = new Label("- Введите логин и пароль от Вашего аккаунта МойСклад");
+        Label text = new Label("- Введите токен от Вашего аккаунта МойСклад");
         VBox vbox = new VBox(text);
         vbox.setPadding(new Insets(15));
         PopOver popOver = new PopOver(vbox);

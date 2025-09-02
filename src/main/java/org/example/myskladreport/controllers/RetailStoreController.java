@@ -24,6 +24,7 @@ import org.controlsfx.control.ListSelectionView;
 import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
 import org.example.myskladreport.models.RetailStore;
+import org.example.myskladreport.utils.ErrorLogger;
 import org.example.myskladreport.utils.SkladRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -171,31 +172,35 @@ public class RetailStoreController implements Initializable {
      */
     @FXML
     private void nextButtonHandler() throws IOException {
-        if (selectedRetailStores.isEmpty()) {
-            showEmptySelectedHandler();
-        } else {
-            Stage currentStage = (Stage) nextButton.getScene().getWindow();
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
-            Parent root = fxmlLoader.load();
-            
-            String token = skladRequest.getToken();
-            ProductFolderController productFolderController = fxmlLoader.getController();
-            productFolderController.setSelectedRetailStores(selectedRetailStores);
-            productFolderController.setAvailableRetailStores(availableRetailStores);
-            productFolderController.setToken(token);
-
-            Stage newStage = new Stage();
-            newStage.setTitle("Группы товаров");
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-            newStage.setScene(scene);
-            newStage.setResizable(false);
-            currentStage.close();
-            
-            productFolderController.setStage(newStage);
-            newStage.setX(currentStage.getX()); 
-            newStage.setY(currentStage.getY());
-            newStage.show();
+        try {
+            if (selectedRetailStores.isEmpty()) {
+                showEmptySelectedHandler();
+            } else {
+                Stage currentStage = (Stage) nextButton.getScene().getWindow();
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("product-folder.fxml"));
+                Parent root = fxmlLoader.load();
+                
+                String token = skladRequest.getToken();
+                ProductFolderController productFolderController = fxmlLoader.getController();
+                productFolderController.setSelectedRetailStores(selectedRetailStores);
+                productFolderController.setAvailableRetailStores(availableRetailStores);
+                productFolderController.setToken(token);
+    
+                Stage newStage = new Stage();
+                newStage.setTitle("Группы товаров");
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+                newStage.setScene(scene);
+                newStage.setResizable(false);
+                currentStage.close();
+                
+                productFolderController.setStage(newStage);
+                newStage.setX(currentStage.getX()); 
+                newStage.setY(currentStage.getY());
+                newStage.show();
+            }
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
         }
     }
 
@@ -223,14 +228,18 @@ public class RetailStoreController implements Initializable {
      * @param filter подстрока
      */
     private void filterAvailableList(String filter) {
-        availableRetailStores.clear();
-        String lowerFilter = filter == null ? "" : filter.toLowerCase();
-        List<RetailStore> filtered = retailStores.stream()
-            .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
-            .filter(store -> !selectedRetailStores.contains(store))
-            .collect(Collectors.toList());
-
-        availableRetailStores.addAll(filtered);
+        try {
+            availableRetailStores.clear();
+            String lowerFilter = filter == null ? "" : filter.toLowerCase();
+            List<RetailStore> filtered = retailStores.stream()
+                .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
+                .filter(store -> !selectedRetailStores.contains(store))
+                .collect(Collectors.toList());
+    
+            availableRetailStores.addAll(filtered);
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
+        }
     }
 
     /**
@@ -239,14 +248,18 @@ public class RetailStoreController implements Initializable {
      * @param filter подстрока
      */
     private void filterSelectedList(String filter) {
-        selectedRetailStores.clear();
-        String lowerFilter = filter == null ? "" : filter.toLowerCase();
-        List<RetailStore> filtered = retailStores.stream()
-            .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
-            .filter(store -> !availableRetailStores.contains(store))
-            .collect(Collectors.toList());
-
-        selectedRetailStores.addAll(filtered);
+        try {
+            selectedRetailStores.clear();
+            String lowerFilter = filter == null ? "" : filter.toLowerCase();
+            List<RetailStore> filtered = retailStores.stream()
+                .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
+                .filter(store -> !availableRetailStores.contains(store))
+                .collect(Collectors.toList());
+    
+            selectedRetailStores.addAll(filtered);
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
+        }
     }
 
     /**

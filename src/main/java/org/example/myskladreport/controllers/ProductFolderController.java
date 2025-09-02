@@ -26,6 +26,7 @@ import org.controlsfx.control.PopOver;
 import org.example.myskladreport.HelloApplication;
 import org.example.myskladreport.models.ProductFolder;
 import org.example.myskladreport.models.RetailStore;
+import org.example.myskladreport.utils.ErrorLogger;
 import org.example.myskladreport.utils.FolderChooser;
 import org.example.myskladreport.utils.ReportWriter;
 import org.example.myskladreport.utils.SkladRequest;
@@ -152,21 +153,25 @@ public class ProductFolderController implements Initializable {
      */
     @FXML
     protected void exitButtonHandler(ActionEvent event) throws IOException {
-        Stage currentStage = (Stage) exitButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
-        Parent root = fxmlLoader.load();
-        
-        Stage newStage = new Stage();
-        newStage.setTitle("MySklad Report App");
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-        newStage.setScene(scene);
-        newStage.setResizable(false);
-        newStage.setX(currentStage.getX()); 
-        newStage.setY(currentStage.getY());
-        currentStage.close();
-        
-        newStage.show();
+        try {
+            Stage currentStage = (Stage) exitButton.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
+            Parent root = fxmlLoader.load();
+            
+            Stage newStage = new Stage();
+            newStage.setTitle("MySklad Report App");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+            newStage.setScene(scene);
+            newStage.setResizable(false);
+            newStage.setX(currentStage.getX()); 
+            newStage.setY(currentStage.getY());
+            currentStage.close();
+            
+            newStage.show();
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
+        }
     }
 
     /**
@@ -204,6 +209,7 @@ public class ProductFolderController implements Initializable {
             ReportWriter.write(this.retailStoresSelected, selectedProductFolders, skladRequest, path);
             successfulSaveModal(stage);
         } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -215,24 +221,28 @@ public class ProductFolderController implements Initializable {
      */
     @FXML
     private void backButtonHandler() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
-        Parent root = fxmlLoader.load();
-        RetailStoreController retailStoreController = fxmlLoader.getController();
-        retailStoreController.setListSearchSelected(retailStoresSelected);
-        retailStoreController.setListSearchAvailable(retailStoresAll);
-        retailStoreController.setToken(this.skladRequest.getToken());
-        
-        Stage newStage = new Stage();
-        newStage.setTitle("MySklad Report App");
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-        newStage.setScene(scene);
-        newStage.setResizable(false);
-        newStage.setX(stage.getX()); 
-        newStage.setY(stage.getY());
-        stage.close();
-        
-        newStage.show();
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
+            Parent root = fxmlLoader.load();
+            RetailStoreController retailStoreController = fxmlLoader.getController();
+            retailStoreController.setListSearchSelected(retailStoresSelected);
+            retailStoreController.setListSearchAvailable(retailStoresAll);
+            retailStoreController.setToken(this.skladRequest.getToken());
+            
+            Stage newStage = new Stage();
+            newStage.setTitle("MySklad Report App");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
+            newStage.setScene(scene);
+            newStage.setResizable(false);
+            newStage.setX(stage.getX()); 
+            newStage.setY(stage.getY());
+            stage.close();
+            
+            newStage.show();
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
+        }
     }
 
     /**
@@ -259,14 +269,18 @@ public class ProductFolderController implements Initializable {
      * @param filter подстрока
      */
     private void filterAvailableList(String filter) {
-        availableProductFolders.clear();
-        String lowerFilter = filter == null ? "" : filter.toLowerCase();
-        List<ProductFolder> filtered = productFolders.stream()
-            .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
-            .filter(store -> !selectedProductFolders.contains(store))
-            .collect(Collectors.toList());
-
-        availableProductFolders.addAll(filtered);
+        try {
+            availableProductFolders.clear();
+            String lowerFilter = filter == null ? "" : filter.toLowerCase();
+            List<ProductFolder> filtered = productFolders.stream()
+                .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
+                .filter(store -> !selectedProductFolders.contains(store))
+                .collect(Collectors.toList());
+    
+            availableProductFolders.addAll(filtered);
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
+        }
     }
 
     /**
@@ -275,14 +289,18 @@ public class ProductFolderController implements Initializable {
      * @param filter подстрока
      */
     private void filterSelectedList(String filter) {
-        selectedProductFolders.clear();
-        String lowerFilter = filter == null ? "" : filter.toLowerCase();
-        List<ProductFolder> filtered = productFolders.stream()
-            .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
-            .filter(store -> !availableProductFolders.contains(store))
-            .collect(Collectors.toList());
-
-        selectedProductFolders.addAll(filtered);
+        try {
+            selectedProductFolders.clear();
+            String lowerFilter = filter == null ? "" : filter.toLowerCase();
+            List<ProductFolder> filtered = productFolders.stream()
+                .filter(store -> store.getName().toLowerCase().contains(lowerFilter))
+                .filter(store -> !availableProductFolders.contains(store))
+                .collect(Collectors.toList());
+    
+            selectedProductFolders.addAll(filtered);
+        } catch (Exception e) {
+            ErrorLogger.logAndShowError(e);
+        }
     }
 
     /**
