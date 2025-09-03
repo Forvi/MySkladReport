@@ -74,7 +74,7 @@ public class LoginPasswordController implements Initializable {
             Parent root = fxmlLoader.load();
             
             RetailStoreController retailStoreController = fxmlLoader.getController();
-            retailStoreController.setToken(token);
+            retailStoreController.setTokenWithLoadData(token);
     
             Stage newStage = new Stage();
             newStage.setTitle("Точки продаж");

@@ -36,9 +36,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ProductFolderController implements Initializable {
 
     @FXML
-    private Button exitButton;
-
-    @FXML
     private TextField listSearchAvailable;
 
     @FXML
@@ -69,7 +66,7 @@ public class ProductFolderController implements Initializable {
 
     private ObservableList<RetailStore> retailStoresSelected;
 
-    private ObservableList<RetailStore> retailStoresAll;
+    private ObservableList<RetailStore> retailStoresAvailable;
 
     private SkladRequest skladRequest;
 
@@ -108,22 +105,22 @@ public class ProductFolderController implements Initializable {
 
     public void setSelectedRetailStores(ObservableList<RetailStore> retailStoresSelected) {
         if (retailStoresSelected.isEmpty() || Objects.isNull(retailStoresSelected))
-            throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
+            throw new IllegalArgumentException("Selected Retail Stores cannot be empty or null.");
 
         this.retailStoresSelected = retailStoresSelected;
     }
 
     public void setAvailableRetailStores(ObservableList<RetailStore> retailStoresAvailable) {
-        if (retailStoresAvailable.isEmpty() || Objects.isNull(retailStoresAvailable))
-            throw new IllegalArgumentException("Retail Stores cannot be empty or null.");
+        if (Objects.isNull(retailStoresAvailable))
+            throw new IllegalArgumentException("Available Retail Stores cannot be null.");
 
-        this.retailStoresAll = retailStoresAvailable;
+        this.retailStoresAvailable = retailStoresAvailable;
     }
 
     public void setProductFolders(ObservableList<ProductFolder> availableProductFolders, 
                                   ObservableList<ProductFolder> selectedProductFolders) {
-        if (availableProductFolders.isEmpty() || Objects.isNull(availableProductFolders))
-            throw new IllegalArgumentException("Available Product Folders cannot be empty or null.");
+        if (Objects.isNull(availableProductFolders))
+            throw new IllegalArgumentException("Available Product Folders cannot be null.");
         
         if (selectedProductFolders.isEmpty() || Objects.isNull(selectedProductFolders))
             throw new IllegalArgumentException("Selected Product Folders cannot be empty or null.");
@@ -145,43 +142,13 @@ public class ProductFolderController implements Initializable {
     // ======== HANDLERS =============
 
     /**
-     * <p>Обработчик кнопки "Выйти".</p>
-     * <p>Загружает окно авторизации.</p>
-     * 
-     * @param event
-     * @throws IOException
-     */
-    @FXML
-    protected void exitButtonHandler(ActionEvent event) throws IOException {
-        try {
-            Stage currentStage = (Stage) exitButton.getScene().getWindow();
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-password.fxml"));
-            Parent root = fxmlLoader.load();
-            
-            Stage newStage = new Stage();
-            newStage.setTitle("MySklad Report App");
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(HelloApplication.class.getResource("styles/styles.css").toExternalForm());
-            newStage.setScene(scene);
-            newStage.setResizable(false);
-            newStage.setX(currentStage.getX()); 
-            newStage.setY(currentStage.getY());
-            currentStage.close();
-            
-            newStage.show();
-        } catch (Exception e) {
-            ErrorLogger.logAndShowError(e);
-        }
-    }
-
-    /**
      * <p>Обработчик кнопки "?"</p>
      * 
      * @param event
      */
     @FXML
     protected void questionButtonHandler(ActionEvent event) {
-        Label text = new Label("- Выберите точки продаж, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
+        Label text = new Label("- Выберите группы товаров, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
                                 "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
         VBox vbox = new VBox(text);
         vbox.setPadding(new Insets(15));
@@ -225,8 +192,8 @@ public class ProductFolderController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("retail-store.fxml"));
             Parent root = fxmlLoader.load();
             RetailStoreController retailStoreController = fxmlLoader.getController();
-            retailStoreController.setListSearchSelected(retailStoresSelected);
-            retailStoreController.setListSearchAvailable(retailStoresAll);
+            retailStoreController.setListSearchSelected(this.retailStoresSelected);
+            retailStoreController.setListSearchAvailable(this.retailStoresAvailable);
             retailStoreController.setToken(this.skladRequest.getToken());
             
             Stage newStage = new Stage();

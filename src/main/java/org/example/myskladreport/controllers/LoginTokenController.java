@@ -69,7 +69,7 @@ public class LoginTokenController implements Initializable {
             
             RetailStoreController retailStoreController = fxmlLoader.getController();
             if (skladRequest.validateToken(token)) {
-                retailStoreController.setToken(token);
+                retailStoreController.setTokenWithLoadData(token);
             } else {
                 showNotValidTokenHandler();
                 return;

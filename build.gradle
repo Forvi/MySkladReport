@@ -73,6 +73,16 @@ jlink {
         requires 'jdk.crypto.ec'
         requires 'jdk.crypto.cryptoki'
     }
+
+    jpackage {
+        appVersion = '1.0.1'
+        icon = 'src/main/resources/icon.ico'
+
+        installerOptions = [
+                '--description', 'Приложение для отчетов Мой Склад',
+                '--vendor', 'Horizon Edge',
+        ]
+    }
 }
 
 jlinkZip {

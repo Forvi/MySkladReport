@@ -93,7 +93,7 @@ public class RetailStoreController implements Initializable {
 
     // ======== SETTERS =============
 
-    public void setToken(String token) {
+    public void setTokenWithLoadData(String token) {
         if (token.isEmpty() || Objects.isNull(token))
             throw new IllegalArgumentException("Token cannot be empty or null.");
 
@@ -102,8 +102,16 @@ public class RetailStoreController implements Initializable {
         loadData();
     }
 
+    public void setToken(String token) {
+        if (token.isEmpty() || Objects.isNull(token))
+            throw new IllegalArgumentException("Token cannot be empty or null.");
+
+        this.skladRequest = new SkladRequest();
+        this.skladRequest.setToken(token);
+    }
+
     public void setListSearchAvailable(ObservableList<RetailStore> availableRetailStores) {
-        if (availableRetailStores.isEmpty() || Objects.isNull(availableRetailStores))
+        if (Objects.isNull(availableRetailStores))
             throw new IllegalArgumentException("Available Retail Stores cannot be empty or null.");
 
         this.availableRetailStores.clear();
@@ -111,7 +119,7 @@ public class RetailStoreController implements Initializable {
     }
 
     public void setListSearchSelected(ObservableList<RetailStore> selectedRetailStores) {
-        if (selectedRetailStores.isEmpty() || Objects.isNull(selectedRetailStores))
+        if (Objects.isNull(selectedRetailStores))
             throw new IllegalArgumentException("Selected Retail Stores cannot be empty or null.");
         
         this.selectedRetailStores.clear();
