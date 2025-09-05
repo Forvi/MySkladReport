@@ -82,7 +82,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Text>
-            <CheckBox fx:id="isDetailed" layoutX="121.0" layoutY="527.0" mnemonicParsing="false" styleClass="my-checkbox" text="Подробный" />
+            <CheckBox fx:id="isDetailedCheckBox" layoutX="121.0" layoutY="527.0" mnemonicParsing="false" styleClass="my-checkbox" text="Подробный" />
       </children>
     </AnchorPane>
   </children>

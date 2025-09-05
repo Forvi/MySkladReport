@@ -58,7 +58,7 @@ public class ProductFolderController implements Initializable {
     private Button backButton;
 
     @FXML
-    private CheckBox isDetailed;
+    private CheckBox isDetailedCheckBox;
 
     List<ProductFolder> productFolders;
 
@@ -181,7 +181,8 @@ public class ProductFolderController implements Initializable {
             }
 
             String path = FolderChooser.choose(stage, "Выберите папку");
-            reportWriter.generateReport(this.retailStoresSelected, selectedProductFolders, skladRequest, path, true);
+            boolean isDetailed = isDetailedCheckBox.isSelected();
+            reportWriter.generateReport(this.retailStoresSelected, selectedProductFolders, skladRequest, path, isDetailed);
             successfulSaveModal(stage);
         } catch (Exception e) {
             ErrorLogger.logAndShowError(e);
