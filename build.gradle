@@ -76,7 +76,7 @@ jlink {
 
     jpackage {
         appVersion = '1.0.1'
-        icon = 'src/main/resources/icon.ico'
+        icon = 'src/main/resources/icon.png'
 
         installerOptions = [
                 '--description', 'Приложение для отчетов Мой Склад',

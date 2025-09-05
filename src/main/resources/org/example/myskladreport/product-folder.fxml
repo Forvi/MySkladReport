@@ -34,6 +34,7 @@
 
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
@@ -51,13 +52,13 @@
                </font>
             </Text>
             <Button fx:id="questionButton" layoutX="985.0" layoutY="602.0" mnemonicParsing="false" onAction="#questionButtonHandler" styleClass="question-button" text="?" />
-            <Button fx:id="backButton" onAction="#backButtonHandler" layoutX="18.0" layoutY="8.0" mnemonicParsing="false" text="←" styleClass="back-button"/>
+            <Button fx:id="backButton" layoutX="18.0" layoutY="8.0" mnemonicParsing="false" onAction="#backButtonHandler" styleClass="back-button" text="←" />
             <ListSelectionView fx:id="listSelectionView" layoutX="112.0" layoutY="154.0" prefHeight="372.0" prefWidth="848.0" stylesheets="@styles/styles.css">
                <cursor>
                   <Cursor fx:constant="DEFAULT" />
                </cursor>
             </ListSelectionView>
-            <Button fx:id="nextButton" layoutX="843.0" layoutY="518.0" mnemonicParsing="false" onAction="#nextButtonHandler" styleClass="my-primary-button" text="Далее">
+            <Button fx:id="nextButton" layoutX="825.0" layoutY="520.0" mnemonicParsing="false" onAction="#nextButtonHandler" styleClass="my-primary-button" text="Записать">
                <font>
                   <Font size="14.0" />
                </font>
@@ -81,6 +82,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Text>
+            <CheckBox fx:id="isDetailed" layoutX="121.0" layoutY="527.0" mnemonicParsing="false" styleClass="my-checkbox" text="Подробный" />
       </children>
     </AnchorPane>
   </children>

@@ -4,12 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
@@ -273,51 +278,6 @@ public class SkladRequest {
 
         if (login.isEmpty() || password.isEmpty())
             throw new IllegalArgumentException("Login and password cannot be empty");
-    }
-
-
-    
-    /** 
-     * <p>Получить выручку по точке продаж и группе товаров.</p>
-     * 
-     * @param retailStoreId идентификатор точки продаж
-     * @param productFolderId идентификатор группы товаров
-     * @return BigDecimal выручка
-     */
-    public BigDecimal getRevenue(UUID retailStoreId, UUID productFolderId) {
-        try {
-            String url = "https://api.moysklad.ru/api/remap/1.2/report/profit/byproduct?" +
-                        "filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" + retailStoreId +
-                        ";productFolder=https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" + productFolderId;
-            var responseGzip = sendGetRequest(url);
-            var response = unpackedGzip(responseGzip);
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode node = objectMapper.readTree(response);
-
-            ArrayNode rows = (ArrayNode) node.get("rows");
-            return calculateRevenue(rows);
-            
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    /** 
-     * <p>Общая сумма выручки в группе товаров.</p>
-     * 
-     * @param rows
-     * @return BigDecimal
-     */
-    private BigDecimal calculateRevenue(ArrayNode rows) {
-        try {
-            return StreamSupport.stream(rows.spliterator(), true)
-                .map(e -> BigDecimal.valueOf(e.get("sellPrice").asDouble()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .divide(BigDecimal.valueOf(100));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -55,6 +56,9 @@ public class ProductFolderController implements Initializable {
 
     @FXML
     private Button backButton;
+
+    @FXML
+    private CheckBox isDetailed;
 
     List<ProductFolder> productFolders;
 
@@ -149,7 +153,9 @@ public class ProductFolderController implements Initializable {
     @FXML
     protected void questionButtonHandler(ActionEvent event) {
         Label text = new Label("- Выберите группы товаров, для которых Вы хотите просмотреть и выгрузить информацию.\n" + 
-                                "- Для быстрого поиска введите полное или частичное название в текстовое поле.");
+                                "- Для быстрого поиска введите полное или частичное название в текстовое поле.\n" +
+                                "- Чем больше товаров необходимо выгрузить, тем больше времени придётся подождать.\n" +
+                                "- При активации 'Подробный' будет выгружена детальная информация о каждом товаре из группы (Нужно будет подождать).");
         VBox vbox = new VBox(text);
         vbox.setPadding(new Insets(15));
         PopOver popOver = new PopOver(vbox);
@@ -166,6 +172,8 @@ public class ProductFolderController implements Initializable {
      */
     @FXML
     protected void nextButtonHandler() {
+        ReportWriter reportWriter = new ReportWriter();
+
         try {
             if (selectedProductFolders.isEmpty()) {
                 showEmptySelectedHandler();
@@ -173,7 +181,7 @@ public class ProductFolderController implements Initializable {
             }
 
             String path = FolderChooser.choose(stage, "Выберите папку");
-            ReportWriter.write(this.retailStoresSelected, selectedProductFolders, skladRequest, path);
+            reportWriter.generateReport(this.retailStoresSelected, selectedProductFolders, skladRequest, path, true);
             successfulSaveModal(stage);
         } catch (Exception e) {
             ErrorLogger.logAndShowError(e);
